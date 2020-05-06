@@ -22,7 +22,7 @@ class _HomepageState extends State<Homepage> {
     return MaterialApp(
         home: Scaffold(
       appBar: AppBar(
-        title: Text('Anasayfa'),
+        title: Text('Anasayfaların En Güzeli'),
       ),
       body: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
