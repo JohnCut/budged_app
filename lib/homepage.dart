@@ -19,18 +19,18 @@ class _HomepageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-      appBar: AppBar(
-        title: Text('Anasayfaların En Güzeli'),
-      ),
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-        RaisedButton(
-          onPressed: () {
-            if (ihText == null && isText == null && tasText == null) {
-              showDialog(
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: MaterialApp(
+          home: Scaffold(
+        appBar: AppBar(
+          title: Text('Anasayfaların En Güzeli'),
+        ),
+        body: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          RaisedButton(
+            onPressed: () {
+              if (ihText == null && isText == null && tasText == null) {
+                showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
@@ -46,17 +46,20 @@ class _HomepageState extends State<Homepage> {
                         ],
                       );
                     });
-            } else {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Plan(ihText : ihText, isText : isText, tasText : tasText)));
-            }
-          },
-          child: Text('Plana git!'),
-        ),
-        RaisedButton(
-          onPressed: () {
-            if (ihText != null && isText != null && tasText != null) {
-              showDialog(
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Plan(
+                            ihText: ihText, isText: isText, tasText: tasText)));
+              }
+            },
+            child: Text('Plana git!'),
+          ),
+          RaisedButton(
+            onPressed: () {
+              if (ihText != null && isText != null && tasText != null) {
+                showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
@@ -72,14 +75,15 @@ class _HomepageState extends State<Homepage> {
                         ],
                       );
                     });
-            } else {
-              Navigator.push(
-                context, MaterialPageRoute(builder: (context) => NewPlan()));
-            }
-          },
-          child: Text('+'),
-        ),
-      ]),
-    ));
+              } else {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => NewPlan()));
+              }
+            },
+            child: Text('+'),
+          ),
+        ]),
+      )),
+    );
   }
 }
