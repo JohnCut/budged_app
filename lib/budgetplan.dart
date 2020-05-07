@@ -49,8 +49,8 @@ class _PlanState extends State<Plan> {
   String giderSum = ''; // gider toplamı (gider list elemanları toplamı)
   String ihSum = ''; // ih gider toplamı (ih gider list elemanları toplamı)
   String isSum = ''; // is gider toplamı (is gider list elemanları toplamı)
-  List gelirler = [];
-  List giderler = [];
+  List gelirler = []; // gelirler listesi
+  List giderler = []; // giderler listesi
   bool inputCont = false;
   // 4 TANE LIST OLUŞTURULACAK. (GELİR, GİDER, İH GİDER, İS GİDER)
   // GİDERLER HEM KENDİ KATEGORİSİNİN LIST İNE HEM DE GİDER LIST İNE KAYDEDİLECEK.

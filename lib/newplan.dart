@@ -13,7 +13,7 @@ class NewPlan extends StatefulWidget {
 class _NewPlanState extends State<NewPlan> {
   final ihTC = TextEditingController();
   final isTC = TextEditingController();
-  var tasTC = TextEditingController();
+  final tasTC = TextEditingController();
   String ihText, isText, tasText;
   bool verifyPercBool = false;
 
