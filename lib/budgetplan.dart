@@ -49,8 +49,18 @@ class _PlanState extends State<Plan> {
   String giderSum = ''; // gider toplamı (gider list elemanları toplamı)
   String ihSum = ''; // ih gider toplamı (ih gider list elemanları toplamı)
   String isSum = ''; // is gider toplamı (is gider list elemanları toplamı)
-  List gelirler = []; // gelirler listesi
-  List giderler = []; // giderler listesi
+  int ihkbINT = 0;
+  int iskbINT = 0;
+  int antasINT =0;
+  double ihaoranDB = 0;
+  double isaoranDB = 0;
+  int tasaoranINT = 0;
+  int gelirlerSum = 0;
+  int giderlerSum = 0;
+  int ihGiderSum = 0;
+  int isGiderSum = 0;
+  List gelirler = [];
+  List giderler = [];
   bool inputCont = false;
   // 4 TANE LIST OLUŞTURULACAK. (GELİR, GİDER, İH GİDER, İS GİDER)
   // GİDERLER HEM KENDİ KATEGORİSİNİN LIST İNE HEM DE GİDER LIST İNE KAYDEDİLECEK.
@@ -230,6 +240,15 @@ class _PlanState extends State<Plan> {
                                       print(
                                           'GELİRLER LİST LENGTH: ${gelirler.length}');
                                       print('GELİRLER LİST: $gelirler');
+                                      sumGelirList();
+                                      sumIHGiderList();
+                                      sumISGiderList();
+                                      sumKalanIHList();
+                                      sumKalanISList();
+                                      sumAnlikTAS();
+                                      calcIHOran();
+                                      calcISOran();
+                                      calcTASOran();
                                       setState(() {
                                         inputCont = false;
                                       });
@@ -307,6 +326,15 @@ class _PlanState extends State<Plan> {
                                           'GİDERLER LİST LENGTH: ${giderler.length}');
                                       print(
                                           'GİDERLER LİST: ${giderler[0].title}');
+                                          sumIHGiderList();
+                                          sumISGiderList();
+                                          sumGiderlerList();
+                                          sumKalanIHList();
+                                          sumKalanISList();
+                                          sumAnlikTAS();
+                                          calcIHOran();
+                                          calcISOran();
+                                          calcTASOran();
                                       setState(() {
                                         inputCont = false;
                                       });
@@ -443,4 +471,132 @@ class _PlanState extends State<Plan> {
     giderTTC.clear();
     giderTC.clear();
   } // değerleri giderler list ine ekler.
+ sumGelirList() {
+    gelirlerSum = 0;
+    for ( var i = 0; i < gelirler.length; i++) {
+      setState(() {
+        gelirlerSum += int.parse(gelirler[i].unit);
+      });
+    }
+    print('Gelirlerin Toplamı: $gelirlerSum');
+    setState(() {
+      gelirSum = gelirlerSum.toString();
+    });
+  }
+sumIHGiderList() {
+    ihGiderSum= 0;
+    for ( var i = 0; i < giderler.length; i++) {
+      setState(() {
+        if (giderler[i].type == 'İH'){
+          ihGiderSum += int.parse(giderler[i].unit);
+        }
+      });
+    }
+    print('İH Giderlerinin Toplamı: $ihGiderSum');
+    setState(() {
+           ihSum = ihGiderSum.toString();
+        });
+  }
+  sumISGiderList() {
+    isGiderSum = 0;
+    for ( var i = 0; i < giderler.length; i++) {
+      setState(() {
+        if (giderler[i].type == 'İS'){
+          isGiderSum += int.parse(giderler[i].unit);
+        }
+      });
+    }
+    print('İS Giderlerinin Toplamı: $isGiderSum');
+    setState(() {
+          isSum = isGiderSum.toString();
+        });
+  }
+  sumGiderlerList() {
+    setState(() {
+      giderlerSum = ihGiderSum + isGiderSum;
+    });
+    print('Giderler Toplamı: $giderlerSum');
+    setState(() {
+      giderSum = giderlerSum.toString();
+    });
+  }
+  sumKalanIHList() {
+    setState(() {
+      if(gelirlerSum==0){
+        gelirSum="0";
+      double a=int.parse(gelirSum)*int.parse(ihText)/100;
+      ihkbINT = a.round()-ihGiderSum;
+      ihKB=ihkbINT.toString();
+      }
+      else{
+      double a=int.parse(gelirSum)*int.parse(ihText)/100;
+      ihkbINT = a.round()-ihGiderSum;
+      ihKB=ihkbINT.toString();
+      }
+    });
+
+  }
+  sumKalanISList() {
+    setState(() {
+      if(gelirlerSum == 0 ){
+        gelirSum = "0";
+      double a = int.parse(gelirSum)*int.parse(isText)/100;
+      iskbINT = a.round()-isGiderSum;
+      isKB=iskbINT.toString();
+      }
+      else{
+      double a = int.parse(gelirSum)*int.parse(isText)/100;
+      iskbINT = a.round()-isGiderSum;
+      isKB=iskbINT.toString();
+      }
+    });
+  }
+    sumAnlikTAS() {
+      setState(() {
+        if(gelirSum == "" || giderSum == "")
+        {
+          if(gelirSum == "")
+          {
+            anTas = giderSum;
+          }
+          else if(giderSum=="")
+          {
+            anTas = gelirSum;
+          }
+        
+        }
+        else{
+          antasINT = int.parse(gelirSum)-int.parse(giderSum);
+        anTas = antasINT.toString();
+        }
+      });
+    }
+    calcIHOran(){
+      setState(() {
+        double x = int.parse(gelirSum)/100;
+        ihaoranDB = int.parse(ihSum)/x.round();
+        ihAOran = (ihaoranDB).round().toString();
+      });
+
+    }
+    calcISOran(){
+      setState(() {
+        if(gelirlerSum >= giderlerSum){
+        double x = int.parse(gelirSum)/100;
+        isaoranDB = int.parse(isSum)/x.round();
+        isAOran = (isaoranDB).round().toString();
+        }
+        else if(gelirlerSum<giderlerSum){
+          
+        }
+        
+      });
+    }
+    calcTASOran(){
+      setState(() {
+        tasaoranINT = 100-(int.parse(ihAOran)+int.parse(isAOran));
+        tasAOran = (tasaoranINT).toString();
+      });
+    }
+
 }

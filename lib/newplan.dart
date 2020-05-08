@@ -136,6 +136,7 @@ class _NewPlanState extends State<NewPlan> {
       setState(() {
         verifyPercBool = true;
       });
+      
     }
   }
 }
