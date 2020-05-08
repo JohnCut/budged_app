@@ -577,19 +577,12 @@ sumIHGiderList() {
         ihaoranDB = int.parse(ihSum)/x.round();
         ihAOran = (ihaoranDB).round().toString();
       });
-
     }
     calcISOran(){
       setState(() {
-        if(gelirlerSum >= giderlerSum){
         double x = int.parse(gelirSum)/100;
         isaoranDB = int.parse(isSum)/x.round();
         isAOran = (isaoranDB).round().toString();
-        }
-        else if(gelirlerSum<giderlerSum){
-          
-        }
-        
       });
     }
     calcTASOran(){
