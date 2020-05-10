@@ -1,6 +1,7 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'homepage.dart';
+import 'reports.dart';
 
 class Gelir {
   String title, unit;
@@ -51,7 +52,7 @@ class _PlanState extends State<Plan> {
   String isSum = ''; // is gider toplamı (is gider list elemanları toplamı)
   int ihkbINT = 0;
   int iskbINT = 0;
-  int antasINT =0;
+  int antasINT = 0;
   double ihaoranDB = 0;
   double isaoranDB = 0;
   int tasaoranINT = 0;
@@ -94,8 +95,8 @@ class _PlanState extends State<Plan> {
             IconButton(
                 icon: Icon(Icons.view_list),
                 onPressed: () {
-                  /* Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Reports())); */
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Reports()));
                 }),
           ],
         ),
@@ -326,15 +327,15 @@ class _PlanState extends State<Plan> {
                                           'GİDERLER LİST LENGTH: ${giderler.length}');
                                       print(
                                           'GİDERLER LİST: ${giderler[0].title}');
-                                          sumIHGiderList();
-                                          sumISGiderList();
-                                          sumGiderlerList();
-                                          sumKalanIHList();
-                                          sumKalanISList();
-                                          sumAnlikTAS();
-                                          calcIHOran();
-                                          calcISOran();
-                                          calcTASOran();
+                                      sumIHGiderList();
+                                      sumISGiderList();
+                                      sumGiderlerList();
+                                      sumKalanIHList();
+                                      sumKalanISList();
+                                      sumAnlikTAS();
+                                      calcIHOran();
+                                      calcISOran();
+                                      calcTASOran();
                                       setState(() {
                                         inputCont = false;
                                       });
@@ -372,7 +373,6 @@ class _PlanState extends State<Plan> {
                                 physics: NeverScrollableScrollPhysics(),
                                 itemCount: gelirler.length,
                                 itemBuilder: (context, index) {
-                                  // padding: EdgeInsets.all(16.0);
                                   return ListTile(
                                     title: Container(
                                       child: Row(
@@ -382,7 +382,6 @@ class _PlanState extends State<Plan> {
                                             width: 30.0,
                                           ),
                                           Text(gelirler[index].unit),
-                                          // Text('AAA'),
                                         ],
                                       ),
                                     ),
@@ -405,7 +404,6 @@ class _PlanState extends State<Plan> {
                                 physics: NeverScrollableScrollPhysics(),
                                 itemCount: giderler.length,
                                 itemBuilder: (context, index) {
-                                  // padding: EdgeInsets.all(16.0);
                                   return ListTile(
                                     title: Container(
                                       child: Row(
@@ -419,7 +417,6 @@ class _PlanState extends State<Plan> {
                                             width: 15.0,
                                           ),
                                           Text(giderler[index].type),
-                                          // Text('AAA'),
                                         ],
                                       ),
                                     ),
@@ -471,9 +468,10 @@ class _PlanState extends State<Plan> {
     giderTTC.clear();
     giderTC.clear();
   } // değerleri giderler list ine ekler.
- sumGelirList() {
+
+  sumGelirList() {
     gelirlerSum = 0;
-    for ( var i = 0; i < gelirler.length; i++) {
+    for (var i = 0; i < gelirler.length; i++) {
       setState(() {
         gelirlerSum += int.parse(gelirler[i].unit);
       });
@@ -483,34 +481,37 @@ class _PlanState extends State<Plan> {
       gelirSum = gelirlerSum.toString();
     });
   }
-sumIHGiderList() {
-    ihGiderSum= 0;
-    for ( var i = 0; i < giderler.length; i++) {
+
+  sumIHGiderList() {
+    ihGiderSum = 0;
+    for (var i = 0; i < giderler.length; i++) {
       setState(() {
-        if (giderler[i].type == 'İH'){
+        if (giderler[i].type == 'İH') {
           ihGiderSum += int.parse(giderler[i].unit);
         }
       });
     }
     print('İH Giderlerinin Toplamı: $ihGiderSum');
     setState(() {
-           ihSum = ihGiderSum.toString();
-        });
+      ihSum = ihGiderSum.toString();
+    });
   }
+
   sumISGiderList() {
     isGiderSum = 0;
-    for ( var i = 0; i < giderler.length; i++) {
+    for (var i = 0; i < giderler.length; i++) {
       setState(() {
-        if (giderler[i].type == 'İS'){
+        if (giderler[i].type == 'İS') {
           isGiderSum += int.parse(giderler[i].unit);
         }
       });
     }
     print('İS Giderlerinin Toplamı: $isGiderSum');
     setState(() {
-          isSum = isGiderSum.toString();
-        });
+      isSum = isGiderSum.toString();
+    });
   }
+
   sumGiderlerList() {
     setState(() {
       giderlerSum = ihGiderSum + isGiderSum;
@@ -520,76 +521,72 @@ sumIHGiderList() {
       giderSum = giderlerSum.toString();
     });
   }
+
   sumKalanIHList() {
     setState(() {
-      if(gelirlerSum==0){
-        gelirSum="0";
-      double a=int.parse(gelirSum)*int.parse(ihText)/100;
-      ihkbINT = a.round()-ihGiderSum;
-      ihKB=ihkbINT.toString();
-      }
-      else{
-      double a=int.parse(gelirSum)*int.parse(ihText)/100;
-      ihkbINT = a.round()-ihGiderSum;
-      ihKB=ihkbINT.toString();
+      if (gelirlerSum == 0) {
+        gelirSum = "0";
+        double a = int.parse(gelirSum) * int.parse(ihText) / 100;
+        ihkbINT = a.round() - ihGiderSum;
+        ihKB = ihkbINT.toString();
+      } else {
+        double a = int.parse(gelirSum) * int.parse(ihText) / 100;
+        ihkbINT = a.round() - ihGiderSum;
+        ihKB = ihkbINT.toString();
       }
     });
-
   }
+
   sumKalanISList() {
     setState(() {
-      if(gelirlerSum == 0 ){
+      if (gelirlerSum == 0) {
         gelirSum = "0";
-      double a = int.parse(gelirSum)*int.parse(isText)/100;
-      iskbINT = a.round()-isGiderSum;
-      isKB=iskbINT.toString();
-      }
-      else{
-      double a = int.parse(gelirSum)*int.parse(isText)/100;
-      iskbINT = a.round()-isGiderSum;
-      isKB=iskbINT.toString();
+        double a = int.parse(gelirSum) * int.parse(isText) / 100;
+        iskbINT = a.round() - isGiderSum;
+        isKB = iskbINT.toString();
+      } else {
+        double a = int.parse(gelirSum) * int.parse(isText) / 100;
+        iskbINT = a.round() - isGiderSum;
+        isKB = iskbINT.toString();
       }
     });
   }
-    sumAnlikTAS() {
-      setState(() {
-        if(gelirSum == "" || giderSum == "")
-        {
-          if(gelirSum == "")
-          {
-            anTas = giderSum;
-          }
-          else if(giderSum=="")
-          {
-            anTas = gelirSum;
-          }
-        
-        }
-        else{
-          antasINT = int.parse(gelirSum)-int.parse(giderSum);
-        anTas = antasINT.toString();
-        }
-      });
-    }
-    calcIHOran(){
-      setState(() {
-        double x = int.parse(gelirSum)/100;
-        ihaoranDB = int.parse(ihSum)/x.round();
-        ihAOran = (ihaoranDB).round().toString();
-      });
-    }
-    calcISOran(){
-      setState(() {
-        double x = int.parse(gelirSum)/100;
-        isaoranDB = int.parse(isSum)/x.round();
-        isAOran = (isaoranDB).round().toString();
-      });
-    }
-    calcTASOran(){
-      setState(() {
-        tasaoranINT = 100-(int.parse(ihAOran)+int.parse(isAOran));
-        tasAOran = (tasaoranINT).toString();
-      });
-    }
 
+  sumAnlikTAS() {
+    setState(() {
+      if (gelirSum == "" || giderSum == "") {
+        if (gelirSum == "") {
+          anTas = giderSum;
+        } else if (giderSum == "") {
+          anTas = gelirSum;
+        }
+      } else {
+        antasINT = int.parse(gelirSum) - int.parse(giderSum);
+        anTas = antasINT.toString();
+      }
+    });
+  }
+
+  calcIHOran() {
+    setState(() {
+      double x = int.parse(gelirSum) / 100;
+      ihaoranDB = int.parse(ihSum) / x.round();
+      ihAOran = (ihaoranDB).round().toString();
+    });
+  }
+
+  calcISOran() {
+    setState(() {
+      double x = int.parse(gelirSum) / 100;
+      isaoranDB = int.parse(isSum) / x.round();
+      isAOran = (isaoranDB).round().toString();
+    });
+  }
+
+  calcTASOran() {
+    setState(() {
+      tasaoranINT = 100 - (int.parse(ihAOran) + int.parse(isAOran));
+      tasAOran = (tasaoranINT).toString();
+    });
+  }
 }

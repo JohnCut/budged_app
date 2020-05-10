@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import 'budgetplan.dart';
-import 'homepage.dart';
 
 class NewPlan extends StatefulWidget {
   @override
@@ -32,8 +30,7 @@ class _NewPlanState extends State<NewPlan> {
           IconButton(
               icon: Icon(Icons.cancel),
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Homepage()));
+                Navigator.pop(context);
               }),
         ],
       ),
