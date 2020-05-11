@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'bpDB.dart';
 import 'budgetplan.dart';
+import 'dbhelper.dart';
 import 'newplan.dart';
 
 class Homepage extends StatefulWidget {
@@ -14,8 +16,20 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  Future<List<BudgetPlan>> budgetPlans;
+  int curUserId;
+  var dbHelper;
   final String ihText, isText, tasText;
   _HomepageState(this.ihText, this.isText, this.tasText);
+  int clickedIndex;
+  int clickedID;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    dbHelper = DBHelper();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,61 +38,58 @@ class _HomepageState extends State<Homepage> {
       child: MaterialApp(
           home: Scaffold(
         appBar: AppBar(
-          title: Text('Anasayfaların En Güzeli'),
+          title: Text('Anasayfa'),
         ),
         body: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          RaisedButton(
-            onPressed: () {
-              if (ihText == null && isText == null && tasText == null) {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        content: Text('ÖNCE BİR BÜTÇE PLANI OLUŞTURULMALI.'),
-                        contentPadding: const EdgeInsets.all(16.0),
-                        actions: <Widget>[
-                          FlatButton(
-                              child: Text('TAMAM'),
-                              textColor: Color(0xFFB6B6B6),
+          FutureBuilder(
+            future: dbHelper.getBudgetPlan(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Expanded(
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: RaisedButton(
                               onPressed: () {
-                                Navigator.pop(context);
-                              }),
-                        ],
-                      );
-                    });
-              } else {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Plan(
-                            ihText: ihText, isText: isText, tasText: tasText)));
+                                setState(() {
+                                  clickedIndex = index;
+                                  clickedID = snapshot.data[index].id;
+                                });
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Plan(
+                                            clickedIndex: clickedIndex,
+                                            clickedID: clickedID)));
+                              },
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Text(snapshot.data[index].ihOran),
+                                    Text('/'),
+                                    Text(snapshot.data[index].isOran),
+                                    Text('/'),
+                                    Text(snapshot.data[index].tasOran),
+                                    Text(snapshot.data[index].time),
+                                  ])),
+                        );
+                      }),
+                );
               }
+              if (null == snapshot.data || snapshot.data.length == 0) {
+                return Container();
+              }
+              return CircularProgressIndicator();
             },
-            child: Text('Plana git!'),
           ),
           RaisedButton(
             onPressed: () {
-              if (ihText != null && isText != null && tasText != null) {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        content: Text('ZATEN BİR BÜTÇE PLANI OLUŞTURULMUŞ.'),
-                        contentPadding: const EdgeInsets.all(16.0),
-                        actions: <Widget>[
-                          FlatButton(
-                              child: Text('TAMAM'),
-                              textColor: Color(0xFFB6B6B6),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              }),
-                        ],
-                      );
-                    });
-              } else {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => NewPlan()));
-              }
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => NewPlan()));
             },
             child: Text('+'),
           ),

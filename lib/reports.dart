@@ -63,7 +63,8 @@ class _ReportsState extends State<Reports> {
                               children: <Widget>[
                                 Text('Gider Toplamı (IH + IS)'),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
                                     Text(ihToplam),
                                     Text('+'),

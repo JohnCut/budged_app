@@ -1,5 +1,8 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'bpDB.dart';
+import 'dbhelper.dart';
 import 'homepage.dart';
 import 'reports.dart';
 
@@ -22,18 +25,24 @@ class Gider {
 }
 
 class Plan extends StatefulWidget {
-  final String ihText, isText, tasText;
+  final int clickedID, clickedIndex;
   Plan({
-    this.ihText,
-    this.isText,
-    this.tasText,
+    this.clickedID,
+    this.clickedIndex,
   });
-  _PlanState createState() => _PlanState(ihText, isText, tasText);
+  _PlanState createState() => _PlanState(clickedID, clickedIndex);
 }
 
 class _PlanState extends State<Plan> {
-  final String ihText, isText, tasText; // planlanan oranlar
-  _PlanState(this.ihText, this.isText, this.tasText);
+  Future<List<BudgetPlan>> budgetPlans;
+  int curUserId;
+  var dbHelper;
+  int index;
+  var i;
+
+  String ihText, isText, tasText; // planlanan oranlar
+  final int clickedID, clickedIndex;
+  _PlanState(this.clickedID, this.clickedIndex);
 
   final gelirTC = TextEditingController();
   final giderTC = TextEditingController();
@@ -68,8 +77,12 @@ class _PlanState extends State<Plan> {
 
   @override
   void initState() {
-    print('İH: $ihText, İS: $isText, TAS: $tasText');
     super.initState();
+    dbHelper = DBHelper();
+    /* getPlans(); */
+    print('CLICKEDINDEX= $clickedIndex');
+    print('CLICKEDID= $clickedID');
+    /* print(budgetPlans); */
   }
 
   @override
@@ -84,19 +97,21 @@ class _PlanState extends State<Plan> {
             IconButton(
                 icon: Icon(Icons.home),
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Homepage(
-                              ihText: ihText,
-                              isText: isText,
-                              tasText: tasText)));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Homepage()));
                 }),
             IconButton(
                 icon: Icon(Icons.view_list),
                 onPressed: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => Reports()));
+                }),
+            IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () {
+                  dbHelper.delete(clickedID);
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Homepage()));
                 }),
           ],
         ),
@@ -138,15 +153,47 @@ class _PlanState extends State<Plan> {
                         child: Column(
                           children: <Widget>[
                             Text('Hedeflenen Oranlar'),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                Text(ihText), // planlanan ih oranı
-                                Text('/'),
-                                Text(isText), // planlanan is oranı
-                                Text('/'),
-                                Text(tasText), // planlanan tasarruf oranı
-                              ],
+                            FutureBuilder(
+                              future: dbHelper.getBudgetPlan(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  SchedulerBinding.instance
+                                      .addPostFrameCallback((_) => setState(() {
+                                            ihText = snapshot
+                                                .data[clickedIndex].ihOran;
+                                            isText = snapshot
+                                                .data[clickedIndex].isOran;
+                                            tasText = snapshot
+                                                .data[clickedIndex].tasOran;
+                                          }));
+                                  return Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      Text(snapshot.data[clickedIndex]
+                                          .ihOran), // planlanan ih oranı
+                                      Text('/'),
+                                      Text(snapshot.data[clickedIndex]
+                                          .isOran), // planlanan is oranı
+                                      Text('/'),
+                                      Text(snapshot.data[clickedIndex]
+                                          .tasOran), // planlanan tasarruf oranı
+                                    ],
+                                  );
+                                }
+                                if (null == snapshot.data ||
+                                    snapshot.data.length == 0) {
+                                  return Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      Text(
+                                          'PLAN KAYDOLMAMIŞ'), // planlanan ih oranı// planlanan tasarruf oranı
+                                    ],
+                                  );
+                                }
+                                return CircularProgressIndicator();
+                              },
                             ),
                           ],
                         ),
@@ -589,4 +636,16 @@ class _PlanState extends State<Plan> {
       tasAOran = (tasaoranINT).toString();
     });
   }
+
+  getPlans() {
+    setState(() {
+      budgetPlans = dbHelper.getBudgetPlan();
+    });
+  }
+
+  /* setPerc() {
+    setState(() {
+      ihText = budgetPlans[clickedIndex].ihOran;
+    });
+  } */
 }

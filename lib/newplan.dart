@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'budgetplan.dart';
+import 'bpDB.dart';
+import 'dart:async';
+
+import 'dbhelper.dart';
+import 'homepage.dart';
 
 class NewPlan extends StatefulWidget {
   @override
@@ -9,6 +15,13 @@ class NewPlan extends StatefulWidget {
 }
 
 class _NewPlanState extends State<NewPlan> {
+  int curUserId;
+  var dbHelper;
+
+  static var now = DateTime.now();
+  static var formatNow = DateFormat("dd-MM-yyyy hh:mm:ss").format(now);
+  String nowString = "${formatNow.toString()}";
+
   final ihTC = TextEditingController();
   final isTC = TextEditingController();
   final tasTC = TextEditingController();
@@ -18,6 +31,7 @@ class _NewPlanState extends State<NewPlan> {
   @override
   void initState() {
     super.initState();
+    dbHelper = DBHelper();
   }
 
   @override
@@ -78,6 +92,7 @@ class _NewPlanState extends State<NewPlan> {
               RaisedButton(
                   child: Text('Plan Oluştur'),
                   onPressed: () {
+                    print(nowString);
                     verifyPerc();
                     if (verifyPercBool != true) {
                       print('ORANLARIN TOPLAMI 100 OLMALI');
@@ -98,13 +113,11 @@ class _NewPlanState extends State<NewPlan> {
                             );
                           });
                     } else {
+                      addPlan();
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Plan(
-                                  ihText: ihText,
-                                  isText: isText,
-                                  tasText: tasText)));
+                              builder: (context) => Homepage()));
                     }
                   }),
             ]),
@@ -133,7 +146,11 @@ class _NewPlanState extends State<NewPlan> {
       setState(() {
         verifyPercBool = true;
       });
-      
     }
+  }
+
+  addPlan() async {
+    BudgetPlan e = await BudgetPlan(null, nowString, ihText, isText, tasText);
+    await dbHelper.save(e);
   }
 }
