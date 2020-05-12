@@ -21,6 +21,7 @@ class _ReportsState extends State<Reports> {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
+            backgroundColor: Color.fromRGBO(182, 195, 204, 1.0),
             appBar: AppBar(
               title: Text('Aylık Raporlar'),
               actions: <Widget>[
@@ -35,16 +36,16 @@ class _ReportsState extends State<Reports> {
               child: Column(
                 children: <Widget>[
                   Container(
+                    color: Colors.white,
                     margin: const EdgeInsets.all(15.0),
                     padding: const EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(border: Border.all()),
                     child: Column(children: <Widget>[
                       Row(children: <Widget>[
                         Text('OCAK'),
                       ]),
                       Container(
+                          color: Color.fromRGBO(235, 239, 242, 1.0),
                           padding: const EdgeInsets.all(5.0),
-                          decoration: BoxDecoration(border: Border.all()),
                           child: Column(children: <Widget>[
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

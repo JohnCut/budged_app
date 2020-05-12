@@ -91,6 +91,7 @@ class _PlanState extends State<Plan> {
       onWillPop: () async => false,
       child: MaterialApp(
           home: Scaffold(
+        backgroundColor: Color.fromRGBO(235, 239, 242, 1.0),
         appBar: AppBar(
           title: Text('Bütçe Planı'),
           actions: <Widget>[
@@ -109,50 +110,106 @@ class _PlanState extends State<Plan> {
             IconButton(
                 icon: Icon(Icons.delete),
                 onPressed: () {
-                  dbHelper.delete(clickedID);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Homepage()));
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Text('Bütçe Planını Silmek İstiyor Musunuz ?'),
+                          contentPadding: const EdgeInsets.all(16.0),
+                          actions: <Widget>[
+                            FlatButton(
+                                child: Text('İPTAL'),
+                                textColor: Color(0xFFB6B6B6),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }),
+                            FlatButton(
+                                child: Text('EVET'),
+                                textColor: Color(0xFFB6B6B6),
+                                onPressed: () {
+                                  dbHelper.delete(clickedID);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Homepage()));
+                                }),
+                          ],
+                        );
+                      });
                 }),
           ],
         ),
         body: Center(
           child: Column(children: [
             Container(
-              margin: const EdgeInsets.all(15.0),
+              color: Colors.white,
+              margin: EdgeInsets.symmetric(vertical: 7.0, horizontal: 0.0),
               padding: const EdgeInsets.all(10.0),
-              decoration: BoxDecoration(border: Border.all()),
               child: Column(children: [
                 Container(
+                    color: Color.fromRGBO(235, 239, 242, 1.0),
+                    margin:
+                        EdgeInsets.symmetric(vertical: 7.0, horizontal: 0.0),
+                    padding: EdgeInsets.all(7.0),
                     child: Column(
-                  children: <Widget>[
-                    Text('Kalan Bütçe'),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        Text('İH '),
-                        Text(ihKB), // ih kalan bütçe
-                        Text('/'),
-                        Text('İS'),
-                        Text(isKB), // is kalan bütçe
+                        Text(
+                          'Kalan Bütçe',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Text('İH '),
+                            Text(ihKB), // ih kalan bütçe
+                            Text('₺'),
+                            Text('/'),
+                            Text('İS'),
+                            Text(isKB), // is kalan bütçe
+                            Text('₺'),
+                          ],
+                        )
                       ],
-                    )
-                  ],
-                )),
+                    )),
                 Container(
-                  child: Column(
+                  color: Color.fromRGBO(235, 239, 242, 1.0),
+                  margin: EdgeInsets.symmetric(vertical: 7.0, horizontal: 0.0),
+                  padding: EdgeInsets.all(7.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text('Anlık Tasarruf'),
-                      Text(anTas), // anlık tasarruf
+                      Column(
+                        children: <Widget>[
+                          Text(
+                            'Anlık Tasarruf',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(anTas), // anlık tasarruf
+                          Text('₺'),
+                        ],
+                      ),
                     ],
                   ),
                 ),
                 Container(
+                  color: Color.fromRGBO(235, 239, 242, 1.0),
+                  margin: EdgeInsets.symmetric(vertical: 7.0, horizontal: 0.0),
+                  padding: EdgeInsets.all(7.0),
                   child: Row(
                     children: <Widget>[
                       Expanded(
                         child: Column(
                           children: <Widget>[
-                            Text('Hedeflenen Oranlar'),
+                            Text(
+                              'Hedeflenen Oranlar',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             FutureBuilder(
                               future: dbHelper.getBudgetPlan(),
                               builder: (context, snapshot) {
@@ -201,7 +258,12 @@ class _PlanState extends State<Plan> {
                       Expanded(
                         child: Column(
                           children: <Widget>[
-                            Text('Anlık Oranlar'),
+                            Text(
+                              'Anlık Oranlar',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
@@ -222,12 +284,19 @@ class _PlanState extends State<Plan> {
             ),
             Container(
                 child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 RaisedButton(
+                    color: Colors.white,
+                    elevation: 4,
                     child: Text('Girdi ekle'),
                     onPressed: () {
                       setState(() {
-                        inputCont = true;
+                        if (inputCont == false) {
+                          inputCont = true;
+                        } else {
+                          inputCont = false;
+                        }
                       });
                     })
               ],
@@ -237,163 +306,185 @@ class _PlanState extends State<Plan> {
                 children: <Widget>[
                   if (inputCont != false)
                     Expanded(
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                Text('Gelir giriniz.'),
-                                Flexible(
-                                    child: TextField(
-                                  controller: gelirTTC,
-                                  decoration: InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      labelText: 'Gelir İsmi'),
-                                )),
-                                Flexible(
-                                    child: TextField(
-                                  controller: gelirTC,
-                                  decoration: InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      labelText: 'Gelir Değeri'),
-                                  keyboardType: TextInputType.number,
-                                )),
-                                RaisedButton(
-                                  onPressed: () {
-                                    if (gelirTTC.text == '' ||
-                                        gelirTC.text == '') {
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              content: Text(
-                                                  'LÜTFEN GEREKLİ ALANLARI DOLDURUN.'),
-                                              contentPadding:
-                                                  const EdgeInsets.all(16.0),
-                                              actions: <Widget>[
-                                                FlatButton(
-                                                    child: Text('TAMAM'),
-                                                    textColor:
-                                                        Color(0xFFB6B6B6),
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    }),
-                                              ],
-                                            );
+                      child: Container(
+                        color: Colors.white,
+                        padding: EdgeInsets.all(10.0),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                color: Color.fromRGBO(235, 239, 242, 1.0),
+                                margin: EdgeInsets.all(5.0),
+                                padding: EdgeInsets.all(5.0),
+                                child: Column(
+                                  children: <Widget>[
+                                    Text('Gelir giriniz.'),
+                                    Flexible(
+                                        child: TextField(
+                                      controller: gelirTTC,
+                                      decoration: InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          labelText: 'Gelir İsmi'),
+                                    )),
+                                    Flexible(
+                                        child: TextField(
+                                      controller: gelirTC,
+                                      decoration: InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          labelText: 'Gelir Değeri'),
+                                      keyboardType: TextInputType.number,
+                                    )),
+                                    RaisedButton(
+                                      color: Colors.white,
+                                      elevation: 4,
+                                      onPressed: () {
+                                        if (gelirTTC.text == '' ||
+                                            gelirTC.text == '') {
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  content: Text(
+                                                      'LÜTFEN GEREKLİ ALANLARI DOLDURUN.'),
+                                                  contentPadding:
+                                                      const EdgeInsets.all(
+                                                          16.0),
+                                                  actions: <Widget>[
+                                                    FlatButton(
+                                                        child: Text('TAMAM'),
+                                                        textColor:
+                                                            Color(0xFFB6B6B6),
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        }),
+                                                  ],
+                                                );
+                                              });
+                                        } else if (gelirTTC.text != '' &&
+                                            gelirTC.text != '') {
+                                          gelirAdd(gelirTTC.text,
+                                              gelirTC.text); // ekleme işlemi
+                                          print(
+                                              'GELİRLER LİST LENGTH: ${gelirler.length}');
+                                          print('GELİRLER LİST: $gelirler');
+                                          sumGelirList();
+                                          sumIHGiderList();
+                                          sumISGiderList();
+                                          sumKalanIHList();
+                                          sumKalanISList();
+                                          sumAnlikTAS();
+                                          calcIHOran();
+                                          calcISOran();
+                                          calcTASOran();
+                                          setState(() {
+                                            inputCont = false;
                                           });
-                                    } else if (gelirTTC.text != '' &&
-                                        gelirTC.text != '') {
-                                      gelirAdd(gelirTTC.text,
-                                          gelirTC.text); // ekleme işlemi
-                                      print(
-                                          'GELİRLER LİST LENGTH: ${gelirler.length}');
-                                      print('GELİRLER LİST: $gelirler');
-                                      sumGelirList();
-                                      sumIHGiderList();
-                                      sumISGiderList();
-                                      sumKalanIHList();
-                                      sumKalanISList();
-                                      sumAnlikTAS();
-                                      calcIHOran();
-                                      calcISOran();
-                                      calcTASOran();
-                                      setState(() {
-                                        inputCont = false;
-                                      });
-                                    }
-                                  },
-                                  child: Text('Geliri kaydet'),
+                                        }
+                                      },
+                                      child: Text('Geliri kaydet'),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                Text('Gider giriniz.'),
-                                DropdownButton<String>(
-                                  value: gidDBValue,
-                                  onChanged: (String newValue) {
-                                    setState(() {
-                                      gidDBValue = newValue;
-                                    });
-                                    print(gidDBValue);
-                                  },
-                                  items: <String>['İH', 'İS']
-                                      .map<DropdownMenuItem<String>>(
-                                          (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                ),
-                                Flexible(
-                                    child: TextField(
-                                  controller: giderTTC,
-                                  decoration: InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      labelText: 'Gider İsmi'),
-                                )),
-                                Flexible(
-                                    child: TextField(
-                                  controller: giderTC,
-                                  decoration: InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      labelText: 'Gider Değeri'),
-                                  keyboardType: TextInputType.number,
-                                )),
-                                RaisedButton(
-                                  onPressed: () {
-                                    if (giderTTC.text == '' ||
-                                        giderTC.text == '') {
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              content: Text(
-                                                  'LÜTFEN GEREKLİ ALANLARI DOLDURUN.'),
-                                              contentPadding:
-                                                  const EdgeInsets.all(16.0),
-                                              actions: <Widget>[
-                                                FlatButton(
-                                                    child: Text('TAMAM'),
-                                                    textColor:
-                                                        Color(0xFFB6B6B6),
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    }),
-                                              ],
-                                            );
+                            Expanded(
+                              child: Container(
+                                color: Color.fromRGBO(235, 239, 242, 1.0),
+                                margin: EdgeInsets.all(5.0),
+                                padding: EdgeInsets.all(5.0),
+                                child: Column(
+                                  children: <Widget>[
+                                    Text('Gider giriniz.'),
+                                    Flexible(
+                                        child: TextField(
+                                      controller: giderTTC,
+                                      decoration: InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          labelText: 'Gider İsmi'),
+                                    )),
+                                    Flexible(
+                                        child: TextField(
+                                      controller: giderTC,
+                                      decoration: InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          labelText: 'Gider Değeri'),
+                                      keyboardType: TextInputType.number,
+                                    )),
+                                    DropdownButton<String>(
+                                      value: gidDBValue,
+                                      onChanged: (String newValue) {
+                                        setState(() {
+                                          gidDBValue = newValue;
+                                        });
+                                        print(gidDBValue);
+                                      },
+                                      items: <String>['İH', 'İS']
+                                          .map<DropdownMenuItem<String>>(
+                                              (String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
+                                    ),
+                                    RaisedButton(
+                                      color: Colors.white,
+                                      elevation: 4,
+                                      onPressed: () {
+                                        if (giderTTC.text == '' ||
+                                            giderTC.text == '') {
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  content: Text(
+                                                      'LÜTFEN GEREKLİ ALANLARI DOLDURUN.'),
+                                                  contentPadding:
+                                                      const EdgeInsets.all(
+                                                          16.0),
+                                                  actions: <Widget>[
+                                                    FlatButton(
+                                                        child: Text('TAMAM'),
+                                                        textColor:
+                                                            Color(0xFFB6B6B6),
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        }),
+                                                  ],
+                                                );
+                                              });
+                                        } else if (giderTTC.text != '' &&
+                                            giderTC.text != '') {
+                                          giderAdd(giderTTC.text, gidDBValue,
+                                              giderTC.text); // ekleme işlemi
+                                          print(
+                                              'GİDERLER LİST LENGTH: ${giderler.length}');
+                                          print(
+                                              'GİDERLER LİST: ${giderler[0].title}');
+                                          sumIHGiderList();
+                                          sumISGiderList();
+                                          sumGiderlerList();
+                                          sumKalanIHList();
+                                          sumKalanISList();
+                                          sumAnlikTAS();
+                                          calcIHOran();
+                                          calcISOran();
+                                          calcTASOran();
+                                          setState(() {
+                                            inputCont = false;
                                           });
-                                    } else if (giderTTC.text != '' &&
-                                        giderTC.text != '') {
-                                      giderAdd(giderTTC.text, gidDBValue,
-                                          giderTC.text); // ekleme işlemi
-                                      print(
-                                          'GİDERLER LİST LENGTH: ${giderler.length}');
-                                      print(
-                                          'GİDERLER LİST: ${giderler[0].title}');
-                                      sumIHGiderList();
-                                      sumISGiderList();
-                                      sumGiderlerList();
-                                      sumKalanIHList();
-                                      sumKalanISList();
-                                      sumAnlikTAS();
-                                      calcIHOran();
-                                      calcISOran();
-                                      calcTASOran();
-                                      setState(() {
-                                        inputCont = false;
-                                      });
-                                    }
-                                  },
-                                  child: Text('Gideri kaydet'),
+                                        }
+                                      },
+                                      child: Text('Gideri kaydet'),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                 ],
@@ -401,81 +492,130 @@ class _PlanState extends State<Plan> {
             ),
             Flexible(
               child: Container(
+                  color: Colors.white,
+                  margin: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                    gelirler.isEmpty
-                        ? Center(
-                            child: Container(
-                              height: 30,
-                              padding: EdgeInsets.only(top: 10),
-                              child: Text(
-                                "Henüz gelir yok.",
+                        gelirler.isEmpty
+                            ? Center(
+                                child: Container(
+                                  height: 30,
+                                  padding: EdgeInsets.only(top: 10),
+                                  child: Text(
+                                    "Henüz gelir yok.",
+                                  ),
+                                ),
+                              )
+                            : Expanded(
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount: gelirler.length,
+                                    itemBuilder: (context, index) {
+                                      return ListTile(
+                                        title: Container(
+                                          color: Color.fromRGBO(
+                                              173, 216, 230, 0.4),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(5.0),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  gelirler[index].title,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 20.0,
+                                                ),
+                                                Text(
+                                                  gelirler[index].unit,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '₺',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }),
                               ),
-                            ),
-                          )
-                        : Expanded(
-                            child: ListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: gelirler.length,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    title: Container(
-                                      child: Row(
-                                        children: <Widget>[
-                                          Text(gelirler[index].title),
-                                          SizedBox(
-                                            width: 30.0,
+                        giderler.isEmpty
+                            ? Center(
+                                child: Container(
+                                  height: 30,
+                                  padding: EdgeInsets.only(top: 10),
+                                  child: Text(
+                                    "Henüz gider yok.",
+                                  ),
+                                ),
+                              )
+                            : Expanded(
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount: giderler.length,
+                                    itemBuilder: (context, index) {
+                                      return ListTile(
+                                        title: Container(
+                                          color: Color.fromRGBO(
+                                              255, 223, 191, 0.4),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(5.0),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  giderler[index].title,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 15.0,
+                                                ),
+                                                Text(
+                                                  giderler[index].unit,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '₺',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 15.0,
+                                                ),
+                                                Text(
+                                                  giderler[index].type,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                          Text(gelirler[index].unit),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }),
-                          ),
-                    giderler.isEmpty
-                        ? Center(
-                            child: Container(
-                              height: 30,
-                              padding: EdgeInsets.only(top: 10),
-                              child: Text(
-                                "Henüz gider yok.",
+                                        ),
+                                      );
+                                    }),
                               ),
-                            ),
-                          )
-                        : Expanded(
-                            child: ListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: giderler.length,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    title: Container(
-                                      child: Row(
-                                        children: <Widget>[
-                                          Text(giderler[index].title),
-                                          SizedBox(
-                                            width: 15.0,
-                                          ),
-                                          Text(giderler[index].unit),
-                                          SizedBox(
-                                            width: 15.0,
-                                          ),
-                                          Text(giderler[index].type),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }),
-                          ),
-                  ])),
+                      ])),
             ),
             Container(
+                color: Colors.white,
                 margin: const EdgeInsets.all(15.0),
                 padding: const EdgeInsets.all(5.0),
-                decoration: BoxDecoration(border: Border.all()),
                 child: Row(
                   children: <Widget>[
                     Text(

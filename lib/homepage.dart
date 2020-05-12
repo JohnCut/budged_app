@@ -37,63 +37,120 @@ class _HomepageState extends State<Homepage> {
       onWillPop: () async => false,
       child: MaterialApp(
           home: Scaffold(
+        backgroundColor: Color.fromRGBO(182, 195, 204, 1.0),
         appBar: AppBar(
           title: Text('Anasayfa'),
         ),
-        body: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          FutureBuilder(
-            future: dbHelper.getBudgetPlan(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Expanded(
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: RaisedButton(
-                              onPressed: () {
-                                setState(() {
-                                  clickedIndex = index;
-                                  clickedID = snapshot.data[index].id;
-                                });
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Plan(
-                                            clickedIndex: clickedIndex,
-                                            clickedID: clickedID)));
-                              },
-                              child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: <Widget>[
-                                    Text(snapshot.data[index].ihOran),
-                                    Text('/'),
-                                    Text(snapshot.data[index].isOran),
-                                    Text('/'),
-                                    Text(snapshot.data[index].tasOran),
-                                    Text(snapshot.data[index].time),
-                                  ])),
-                        );
-                      }),
-                );
-              }
-              if (null == snapshot.data || snapshot.data.length == 0) {
-                return Container();
-              }
-              return CircularProgressIndicator();
-            },
+        body: Container(
+          child: Column(
+            children: <Widget>[
+              Container(
+                  margin:
+                      EdgeInsets.symmetric(vertical: 30.0, horizontal: 20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text('Bütçeni Oluştur!',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 32.0,
+                              fontWeight: FontWeight.bold)),
+                      SizedBox(height: 25.0),
+                      Text(
+                          '50/30/20 kuralı, kişisel finansman alanında uygulanan en etkili metotlardam biridir.',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold)),
+                      Text(
+                          'Fakat sen bu oranları dilediğince ayarlamakta serbestsin.',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold)),
+                    ],
+                  )),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 15.0),
+                color: Color.fromRGBO(235, 239, 242, 1.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      FutureBuilder(
+                        future: dbHelper.getBudgetPlan(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Flexible(
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: snapshot.data.length,
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      title: RaisedButton(
+                                          elevation: 4,
+                                          color: Colors.white,
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 5.0, horizontal: 0.0),
+                                          onPressed: () {
+                                            setState(() {
+                                              clickedIndex = index;
+                                              clickedID =
+                                                  snapshot.data[index].id;
+                                            });
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => Plan(
+                                                        clickedIndex:
+                                                            clickedIndex,
+                                                        clickedID: clickedID)));
+                                          },
+                                          child: Column(children: <Widget>[
+                                            Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: <Widget>[
+                                                  Text(snapshot
+                                                      .data[index].ihOran),
+                                                  Text('/'),
+                                                  Text(snapshot
+                                                      .data[index].isOran),
+                                                  Text('/'),
+                                                  Text(snapshot
+                                                      .data[index].tasOran),
+                                                ]),
+                                            SizedBox(height: 10.0),
+                                            Text(snapshot.data[index].time),
+                                          ])),
+                                    );
+                                  }),
+                            );
+                          }
+                          if (null == snapshot.data ||
+                              snapshot.data.length == 0) {
+                            return Container();
+                          }
+                          return CircularProgressIndicator();
+                        },
+                      ),
+                      RaisedButton(
+                        color: Colors.blue,
+                        textColor: Colors.white,
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => NewPlan()));
+                        },
+                        child: Text('Yeni Plan Ekle'),
+                      ),
+                    ]),
+              ),
+            ],
           ),
-          RaisedButton(
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => NewPlan()));
-            },
-            child: Text('+'),
-          ),
-        ]),
+        ),
       )),
     );
   }
