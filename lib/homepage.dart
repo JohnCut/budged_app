@@ -77,7 +77,7 @@ class _HomepageState extends State<Homepage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       FutureBuilder(
-                        future: dbHelper.getBudgetPlan(),
+                        future: dbHelper.getPlans(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return Flexible(

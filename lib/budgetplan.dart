@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'bpDB.dart';
@@ -34,7 +35,8 @@ class Plan extends StatefulWidget {
 }
 
 class _PlanState extends State<Plan> {
-  Future<List<BudgetPlan>> budgetPlans;
+  Future<List<BudgetPlan>> plansFTR;
+  Future<List<BudgetPlan>> gelirlerFTR;
   int curUserId;
   var dbHelper;
   int index;
@@ -79,10 +81,20 @@ class _PlanState extends State<Plan> {
   void initState() {
     super.initState();
     dbHelper = DBHelper();
-    /* getPlans(); */
     print('CLICKEDINDEX= $clickedIndex');
     print('CLICKEDID= $clickedID');
-    /* print(budgetPlans); */
+
+    sumGelirList();
+    /* sumIHGiderList();
+    sumISGiderList();
+    sumGiderlerList();
+    sumKalanIHList();
+    sumKalanISList();
+    sumAnlikTAS();
+    calcIHOran();
+    calcISOran();
+    calcTASOran(); */
+    
   }
 
   @override
@@ -114,7 +126,8 @@ class _PlanState extends State<Plan> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          content: Text('Bütçe Planını Silmek İstiyor Musunuz ?'),
+                          content:
+                              Text('Bütçe Planını Silmek İstiyor Musunuz ?'),
                           contentPadding: const EdgeInsets.all(16.0),
                           actions: <Widget>[
                             FlatButton(
@@ -127,7 +140,7 @@ class _PlanState extends State<Plan> {
                                 child: Text('EVET'),
                                 textColor: Color(0xFFB6B6B6),
                                 onPressed: () {
-                                  dbHelper.delete(clickedID);
+                                  dbHelper.deletePlan(clickedID);
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -211,7 +224,7 @@ class _PlanState extends State<Plan> {
                               ),
                             ),
                             FutureBuilder(
-                              future: dbHelper.getBudgetPlan(),
+                              future: dbHelper.getPlans(),
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
                                   SchedulerBinding.instance
@@ -337,7 +350,7 @@ class _PlanState extends State<Plan> {
                                     RaisedButton(
                                       color: Colors.white,
                                       elevation: 4,
-                                      onPressed: () {
+                                      onPressed: () async {
                                         if (gelirTTC.text == '' ||
                                             gelirTC.text == '') {
                                           showDialog(
@@ -363,8 +376,7 @@ class _PlanState extends State<Plan> {
                                               });
                                         } else if (gelirTTC.text != '' &&
                                             gelirTC.text != '') {
-                                          gelirAdd(gelirTTC.text,
-                                              gelirTC.text); // ekleme işlemi
+                                          await addGelir();
                                           print(
                                               'GELİRLER LİST LENGTH: ${gelirler.length}');
                                           print('GELİRLER LİST: $gelirler');
@@ -377,9 +389,6 @@ class _PlanState extends State<Plan> {
                                           calcIHOran();
                                           calcISOran();
                                           calcTASOran();
-                                          setState(() {
-                                            inputCont = false;
-                                          });
                                         }
                                       },
                                       child: Text('Geliri kaydet'),
@@ -431,7 +440,7 @@ class _PlanState extends State<Plan> {
                                     RaisedButton(
                                       color: Colors.white,
                                       elevation: 4,
-                                      onPressed: () {
+                                      onPressed: () async {
                                         if (giderTTC.text == '' ||
                                             giderTC.text == '') {
                                           showDialog(
@@ -457,8 +466,7 @@ class _PlanState extends State<Plan> {
                                               });
                                         } else if (giderTTC.text != '' &&
                                             giderTC.text != '') {
-                                          giderAdd(giderTTC.text, gidDBValue,
-                                              giderTC.text); // ekleme işlemi
+                                          await addGider();
                                           print(
                                               'GİDERLER LİST LENGTH: ${giderler.length}');
                                           print(
@@ -472,9 +480,6 @@ class _PlanState extends State<Plan> {
                                           calcIHOran();
                                           calcISOran();
                                           calcTASOran();
-                                          setState(() {
-                                            inputCont = false;
-                                          });
                                         }
                                       },
                                       child: Text('Gideri kaydet'),
@@ -497,17 +502,26 @@ class _PlanState extends State<Plan> {
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        gelirler.isEmpty
-                            ? Center(
-                                child: Container(
-                                  height: 30,
-                                  padding: EdgeInsets.only(top: 10),
-                                  child: Text(
-                                    "Henüz gelir yok.",
-                                  ),
-                                ),
-                              )
-                            : Expanded(
+                        FutureBuilder(
+                          future: dbHelper.getGelirler(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              SchedulerBinding.instance
+                                  .addPostFrameCallback((_) => setState(() {
+                                        gelirler.removeRange(
+                                            0, gelirler.length);
+                                        for (var i = 0;
+                                            i < snapshot.data.length;
+                                            i++) {
+                                          if (snapshot.data[i].bpID ==
+                                              clickedID) {
+                                            addListGelirler(
+                                                snapshot.data[i].title,
+                                                snapshot.data[i].unit);
+                                          } else {}
+                                        }
+                                      }));
+                              return Expanded(
                                 child: ListView.builder(
                                     shrinkWrap: true,
                                     physics: NeverScrollableScrollPhysics(),
@@ -522,7 +536,7 @@ class _PlanState extends State<Plan> {
                                             child: Row(
                                               children: <Widget>[
                                                 Text(
-                                                  gelirler[index].title,
+                                                  '${gelirler[index].title} ${gelirler.length}',
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                   ),
@@ -548,18 +562,44 @@ class _PlanState extends State<Plan> {
                                         ),
                                       );
                                     }),
-                              ),
-                        giderler.isEmpty
-                            ? Center(
+                              );
+                            }
+                            if (null == snapshot.data ||
+                                snapshot.data.length == 0) {
+                              return Center(
                                 child: Container(
                                   height: 30,
                                   padding: EdgeInsets.only(top: 10),
                                   child: Text(
-                                    "Henüz gider yok.",
+                                    "Henüz gelir yok.",
                                   ),
                                 ),
-                              )
-                            : Expanded(
+                              );
+                            }
+                            return CircularProgressIndicator();
+                          },
+                        ),
+                        FutureBuilder(
+                          future: dbHelper.getGiderler(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              SchedulerBinding.instance
+                                  .addPostFrameCallback((_) => setState(() {
+                                        giderler.removeRange(
+                                            0, giderler.length);
+                                        for (var i = 0;
+                                            i < snapshot.data.length;
+                                            i++) {
+                                          if (snapshot.data[i].bpID ==
+                                              clickedID) {
+                                            addListGiderler(
+                                                snapshot.data[i].title,
+                                                snapshot.data[i].type,
+                                                snapshot.data[i].unit);
+                                          } else {}
+                                        }
+                                      }));
+                              return Expanded(
                                 child: ListView.builder(
                                     shrinkWrap: true,
                                     physics: NeverScrollableScrollPhysics(),
@@ -609,7 +649,23 @@ class _PlanState extends State<Plan> {
                                         ),
                                       );
                                     }),
-                              ),
+                              );
+                            }
+                            if (null == snapshot.data ||
+                                snapshot.data.length == 0) {
+                              return Center(
+                                child: Container(
+                                  height: 30,
+                                  padding: EdgeInsets.only(top: 10),
+                                  child: Text(
+                                    "Henüz gider yok.",
+                                  ),
+                                ),
+                              );
+                            }
+                            return CircularProgressIndicator();
+                          },
+                        ),
                       ])),
             ),
             Container(
@@ -640,23 +696,20 @@ class _PlanState extends State<Plan> {
     );
   }
 
-  gelirAdd(String title, unit) {
+  addListGelirler(String title, unit) {
     setState(() {
       gelirler.add((Gelir(title, unit)));
     });
-    gelirTTC.clear();
-    gelirTC.clear();
   } // değerleri gelirler list ine ekler.
 
-  giderAdd(String title, type, unit) {
+  addListGiderler(String title, type, unit) {
     setState(() {
       giderler.add((Gider(title, type, unit)));
     });
-    giderTTC.clear();
-    giderTC.clear();
   } // değerleri giderler list ine ekler.
 
   sumGelirList() {
+    sleep(const Duration(seconds: 1));
     gelirlerSum = 0;
     for (var i = 0; i < gelirler.length; i++) {
       setState(() {
@@ -779,7 +832,40 @@ class _PlanState extends State<Plan> {
 
   getPlans() {
     setState(() {
-      budgetPlans = dbHelper.getBudgetPlan();
+      plansFTR = dbHelper.getPlans();
+    });
+  }
+
+  addGelir() async {
+    GelirDB e = await GelirDB(null, gelirTTC.text, gelirTC.text, clickedID);
+    await dbHelper.insertGE(e);
+    gelirTTC.clear();
+    gelirTC.clear();
+    setState(() {
+      inputCont = false;
+    });
+  }
+
+  getGelirler() {
+    setState(() {
+      gelirler = dbHelper.getGelirler();
+    });
+  }
+
+  addGider() async {
+    GiderDB e =
+        await GiderDB(null, giderTTC.text, giderTC.text, gidDBValue, clickedID);
+    await dbHelper.insertGI(e);
+    giderTTC.clear();
+    giderTC.clear();
+    setState(() {
+      inputCont = false;
+    });
+  }
+
+  getGiderler() {
+    setState(() {
+      giderler = dbHelper.getGiderler();
     });
   }
 

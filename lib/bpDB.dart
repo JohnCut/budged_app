@@ -52,3 +52,32 @@ class GelirDB {
     bpID = map['bpID'];
   }
 }
+
+class GiderDB {
+  int id;
+  String title;
+  String unit;
+  String type;
+  int bpID;
+
+  GiderDB(this.id, this.title, this.unit, this.type, this.bpID);
+
+  Map<String, dynamic> toMap() {
+    var map = <String, dynamic>{
+      'id': id,
+      'title': title,
+      'unit': unit,
+      'type': type,
+      'bpID': bpID,
+    };
+    return map;
+  }
+
+  GiderDB.fromMap(Map<String, dynamic> map) {
+    id = map['id'];
+    title = map['title'];
+    unit = map['unit'];
+    type = map['type'];
+    bpID = map['bpID'];
+  }
+}

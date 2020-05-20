@@ -15,7 +15,6 @@ class NewPlan extends StatefulWidget {
 }
 
 class _NewPlanState extends State<NewPlan> {
-  int curUserId;
   var dbHelper;
 
   static var now = DateTime.now();
@@ -183,20 +182,19 @@ class _NewPlanState extends State<NewPlan> {
       });
     } else {
       if (int.parse(ihText) + int.parse(isText) + int.parse(tasText) != 100) {
-      setState(() {
-        verifyPercBool = false;
-      });
-    } else {
-      setState(() {
-        verifyPercBool = true;
-      });
+        setState(() {
+          verifyPercBool = false;
+        });
+      } else {
+        setState(() {
+          verifyPercBool = true;
+        });
+      }
     }
-    }
-    
   }
 
   addPlan() async {
     BudgetPlan e = await BudgetPlan(null, nowString, ihText, isText, tasText);
-    await dbHelper.save(e);
+    await dbHelper.insertBP(e);
   }
 }

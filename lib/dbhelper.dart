@@ -4,6 +4,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'bpDB.dart';
+import 'dart:convert';
 
 class DBHelper {
   static Database _db;
@@ -13,13 +14,18 @@ class DBHelper {
   static const String BPISORAN = 'isOran';
   static const String BPTASORAN = 'tasOran';
   static const String BPTABLE = 'BudgetPlan';
-  static const String BPDB_NAME = 'budgetplan.db';
+  static const String DB_NAME = 'budgetplan03.db';
   static const String GEID = 'id';
   static const String GETITLE = 'title';
   static const String GEUNIT = 'unit';
   static const String GEBPID = 'bpID';
   static const String GETABLE = 'GelirDB';
-  static const String GEDB_NAME = 'gelirdb.db';
+  static const String GIID = 'id';
+  static const String GITITLE = 'title';
+  static const String GIUNIT = 'unit';
+  static const String GITYPE = 'type';
+  static const String GIBPID = 'bpID';
+  static const String GITABLE = 'GiderDB';
 
   Future<Database> get db async {
     if (_db != null) {
@@ -31,7 +37,7 @@ class DBHelper {
 
   initDb() async {
     io.Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, BPDB_NAME);
+    String path = join(documentsDirectory.path, DB_NAME);
     var db = await openDatabase(path, version: 1, onCreate: _onCreate);
     return db;
   }
@@ -39,9 +45,15 @@ class DBHelper {
   _onCreate(Database db, int version) async {
     await db.execute(
         "CREATE TABLE $BPTABLE ($BPID INTEGER PRIMARY KEY, $BPTIME TEXT, $BPIHORAN TEXT, $BPISORAN TEXT, $BPTASORAN TEXT)");
+
+    await db.execute(
+        "CREATE TABLE $GETABLE ($GEID INTEGER PRIMARY KEY, $GETITLE TEXT, $GEUNIT TEXT, $GEBPID INTEGER)");
+
+    await db.execute(
+        "CREATE TABLE $GITABLE ($GIID INTEGER PRIMARY KEY, $GITITLE TEXT, $GIUNIT TEXT, $GITYPE TEXT, $GIBPID INTEGER)");
   }
 
-  Future<BudgetPlan> save(BudgetPlan budgetplan) async {
+  Future<BudgetPlan> insertBP(BudgetPlan budgetplan) async {
     var dbClient = await db;
     budgetplan.id = await dbClient.insert(BPTABLE, budgetplan.toMap());
 
@@ -60,7 +72,45 @@ class DBHelper {
     }); */
   }
 
-  Future<List<BudgetPlan>> getBudgetPlan() async {
+  Future<GelirDB> insertGE(GelirDB gelir) async {
+    var dbClient = await db;
+    gelir.id = await dbClient.insert(GETABLE, gelir.toMap());
+
+    /* await dbClient.transaction((txn) async {
+      var query =
+          "INSERT INTO $TABLE ($TIME, $IHORAN, $ISORAN, $TASORAN) VALUES ('" +
+              budgetplan.time +
+              "'), ('" +
+              budgetplan.ihOran +
+              "'), ('" +
+              budgetplan.isOran +
+              "'), ('" +
+              budgetplan.tasOran +
+              "')";
+      return await txn.rawInsert(query);
+    }); */
+  }
+
+  Future<GiderDB> insertGI(GiderDB gider) async {
+    var dbClient = await db;
+    gider.id = await dbClient.insert(GITABLE, gider.toMap());
+
+    /* await dbClient.transaction((txn) async {
+      var query =
+          "INSERT INTO $TABLE ($TIME, $IHORAN, $ISORAN, $TASORAN) VALUES ('" +
+              budgetplan.time +
+              "'), ('" +
+              budgetplan.ihOran +
+              "'), ('" +
+              budgetplan.isOran +
+              "'), ('" +
+              budgetplan.tasOran +
+              "')";
+      return await txn.rawInsert(query);
+    }); */
+  }
+
+  Future<List<BudgetPlan>> getPlans() async {
     var dbClient = await db;
     List<Map> maps = await dbClient
         .query(BPTABLE, columns: [BPID, BPTIME, BPIHORAN, BPISORAN, BPTASORAN]);
@@ -74,16 +124,44 @@ class DBHelper {
     return budgetPlans;
   }
 
-  Future<int> delete(int id) async {
+  Future<List<GelirDB>> getGelirler() async {
+    var dbClient = await db;
+    List<Map> maps =
+        await dbClient.query(GETABLE, columns: [GEID, GETITLE, GEUNIT, GEBPID]);
+    // List<Map> maps = await dbClient.rawQuery("SELECT * FROM $TABLE");
+    List<GelirDB> gelirler = [];
+    if (maps.length > 0) {
+      for (int i = 0; i < maps.length; i++) {
+        gelirler.add(GelirDB.fromMap(maps[i]));
+      }
+    }
+    return gelirler;
+  }
+
+  Future<List<GiderDB>> getGiderler() async {
+    var dbClient = await db;
+    List<Map> maps = await dbClient
+        .query(GITABLE, columns: [GEID, GETITLE, GEUNIT, GITYPE, GEBPID]);
+    // List<Map> maps = await dbClient.rawQuery("SELECT * FROM $TABLE");
+    List<GiderDB> giderler = [];
+    if (maps.length > 0) {
+      for (int i = 0; i < maps.length; i++) {
+        giderler.add(GiderDB.fromMap(maps[i]));
+      }
+    }
+    return giderler;
+  }
+
+  Future<int> deletePlan(int id) async {
     var dbClient = await db;
     return await dbClient.delete(BPTABLE, where: '$BPID = ?', whereArgs: [id]);
   }
 
-  Future<int> update(BudgetPlan budgetPlan) async {
+  /* Future<int> update(BudgetPlan budgetPlan) async {
     var dbClient = await db;
     return await dbClient.update(BPTABLE, budgetPlan.toMap(),
         where: '$BPID = ?', whereArgs: [budgetPlan.id]);
-  }
+  } */
 
   Future close() async {
     var dbClient = await db;
