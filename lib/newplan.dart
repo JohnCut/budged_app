@@ -48,119 +48,145 @@ class _NewPlanState extends State<NewPlan> {
               }),
         ],
       ),
-      body: Center(
-        child: Column(children: [
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
-            margin: EdgeInsets.symmetric(vertical: 40.0, horizontal: 0.0),
-            color: Color.fromRGBO(235, 239, 242, 1.0),
-            child: Column(children: [
-              Text('Zorunlu Harcamalar (İH)',
-                  style: TextStyle(
-                    color: Color.fromRGBO(18, 31, 38, 1.0),
-                    fontSize: 20.0,
-                  )),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text('%',
-                    style:
-                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
-                Flexible(
-                    child: Container(
-                  padding: EdgeInsets.all(0.0),
-                  margin: EdgeInsets.all(0.0),
-                  width: 30.0,
-                  child: TextField(
-                    scrollPadding: EdgeInsets.all(0.0),
-                    controller: ihTC,
-                    keyboardType: TextInputType.number,
-                    maxLength: 2,
-                    autofocus: true,
-                  ),
-                ))
-              ]),
-              SizedBox(height: 15.0),
-              Text('İsteğe Bağlı Harcamalar (İS)',
-                  style: TextStyle(
-                    color: Color.fromRGBO(18, 31, 38, 1.0),
-                    fontSize: 20.0,
-                  )),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text('%',
-                    style:
-                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
-                Flexible(
-                    child: Container(
-                  padding: EdgeInsets.all(0.0),
-                  margin: EdgeInsets.all(0.0),
-                  width: 30.0,
-                  child: TextField(
-                    scrollPadding: EdgeInsets.all(0.0),
-                    controller: isTC,
-                    keyboardType: TextInputType.number,
-                    maxLength: 2,
-                    autofocus: true,
-                  ),
-                ))
-              ]),
-              SizedBox(height: 15.0),
-              Text('Tasarruf',
-                  style: TextStyle(
-                    color: Color.fromRGBO(18, 31, 38, 1.0),
-                    fontSize: 20.0,
-                  )),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text('%',
-                    style:
-                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
-                Flexible(
-                    child: Container(
-                  padding: EdgeInsets.all(0.0),
-                  margin: EdgeInsets.all(0.0),
-                  width: 30.0,
-                  child: TextField(
-                    scrollPadding: EdgeInsets.all(0.0),
-                    controller: tasTC,
-                    keyboardType: TextInputType.number,
-                    maxLength: 2,
-                    autofocus: true,
-                  ),
-                ))
-              ]),
-              SizedBox(height: 25.0),
-              RaisedButton(
-                  color: Colors.blue,
-                  textColor: Colors.white,
-                  child: Text('Plan Oluştur'),
-                  onPressed: () {
-                    print(nowString);
-                    verifyPerc();
-                    if (verifyPercBool != true) {
-                      print('ORANLARIN TOPLAMI 100 OLMALI');
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              content: Text('ORANLARIN TOPLAMI 100 OLMALI'),
-                              contentPadding: const EdgeInsets.all(16.0),
-                              actions: <Widget>[
-                                FlatButton(
-                                    child: Text('TAMAM'),
-                                    textColor: Color(0xFFB6B6B6),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    }),
-                              ],
-                            );
-                          });
-                    } else {
-                      addPlan();
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Homepage()));
-                    }
-                  }),
-            ]),
-          )
-        ]),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: Stack(
+          children: <Widget>[
+            SingleChildScrollView(
+              child: Center(
+                child: Column(children: [
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
+                    margin:
+                        EdgeInsets.symmetric(vertical: 40.0, horizontal: 0.0),
+                    color: Color.fromRGBO(235, 239, 242, 1.0),
+                    child: Column(children: [
+                      Text('Zorunlu Harcamalar (İH)',
+                          style: TextStyle(
+                            color: Color.fromRGBO(18, 31, 38, 1.0),
+                            fontSize: 20.0,
+                          )),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('%',
+                                style: TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold)),
+                            Flexible(
+                                child: Container(
+                              padding: EdgeInsets.all(0.0),
+                              margin: EdgeInsets.all(0.0),
+                              width: 30.0,
+                              child: TextField(
+                                scrollPadding: EdgeInsets.all(0.0),
+                                controller: ihTC,
+                                keyboardType: TextInputType.number,
+                                maxLength: 2,
+                                autofocus: true,
+                              ),
+                            ))
+                          ]),
+                      SizedBox(height: 15.0),
+                      Text('İsteğe Bağlı Harcamalar (İS)',
+                          style: TextStyle(
+                            color: Color.fromRGBO(18, 31, 38, 1.0),
+                            fontSize: 20.0,
+                          )),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('%',
+                                style: TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold)),
+                            Flexible(
+                                child: Container(
+                              padding: EdgeInsets.all(0.0),
+                              margin: EdgeInsets.all(0.0),
+                              width: 30.0,
+                              child: TextField(
+                                scrollPadding: EdgeInsets.all(0.0),
+                                controller: isTC,
+                                keyboardType: TextInputType.number,
+                                maxLength: 2,
+                                autofocus: true,
+                              ),
+                            ))
+                          ]),
+                      SizedBox(height: 15.0),
+                      Text('Tasarruf',
+                          style: TextStyle(
+                            color: Color.fromRGBO(18, 31, 38, 1.0),
+                            fontSize: 20.0,
+                          )),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('%',
+                                style: TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold)),
+                            Flexible(
+                                child: Container(
+                              padding: EdgeInsets.all(0.0),
+                              margin: EdgeInsets.all(0.0),
+                              width: 30.0,
+                              child: TextField(
+                                scrollPadding: EdgeInsets.all(0.0),
+                                controller: tasTC,
+                                keyboardType: TextInputType.number,
+                                maxLength: 2,
+                                autofocus: true,
+                              ),
+                            ))
+                          ]),
+                      SizedBox(height: 25.0),
+                      RaisedButton(
+                          color: Colors.blue,
+                          textColor: Colors.white,
+                          child: Text('Plan Oluştur'),
+                          onPressed: () {
+                            print(nowString);
+                            verifyPerc();
+                            if (verifyPercBool != true) {
+                              print('ORANLARIN TOPLAMI 100 OLMALI');
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      content:
+                                          Text('ORANLARIN TOPLAMI 100 OLMALI'),
+                                      contentPadding:
+                                          const EdgeInsets.all(16.0),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                            child: Text('TAMAM'),
+                                            textColor: Color(0xFFB6B6B6),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            }),
+                                      ],
+                                    );
+                                  });
+                            } else {
+                              addPlan();
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Homepage()));
+                            }
+                          }),
+                    ]),
+                  )
+                ]),
+              ),
+            ),
+          ],
+        ),
       ),
     ));
   }

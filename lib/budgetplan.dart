@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:core';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -74,6 +75,7 @@ class _PlanState extends State<Plan> {
   List gelirler = [];
   List giderler = [];
   bool inputCont = false;
+  bool delayBool = false;
   // 4 TANE LIST OLUŞTURULACAK. (GELİR, GİDER, İH GİDER, İS GİDER)
   // GİDERLER HEM KENDİ KATEGORİSİNİN LIST İNE HEM DE GİDER LIST İNE KAYDEDİLECEK.
 
@@ -84,17 +86,31 @@ class _PlanState extends State<Plan> {
     print('CLICKEDINDEX= $clickedIndex');
     print('CLICKEDID= $clickedID');
 
-    sumGelirList();
-    /* sumIHGiderList();
-    sumISGiderList();
-    sumGiderlerList();
-    sumKalanIHList();
-    sumKalanISList();
-    sumAnlikTAS();
-    calcIHOran();
-    calcISOran();
-    calcTASOran(); */
-    
+    delayed(2).then((result) {
+      if (gelirler.length == 0 && giderler.length == 0) {
+        ihKB = '0';
+        isKB = '0';
+        anTas = '0';
+        ihAOran = '-';
+        isAOran = '-';
+        tasAOran = '-';
+        gelirSum = '0';
+        ihSum = '0';
+        isSum = '0';
+        giderSum = '0';
+      } else {
+        sumGelirList();
+        sumIHGiderList();
+        sumISGiderList();
+        sumGiderlerList();
+        sumKalanIHList();
+        sumKalanISList();
+        sumAnlikTAS();
+        calcIHOran();
+        calcISOran();
+        calcTASOran();
+      }
+    });
   }
 
   @override
@@ -127,7 +143,7 @@ class _PlanState extends State<Plan> {
                       builder: (BuildContext context) {
                         return AlertDialog(
                           content:
-                              Text('Bütçe Planını Silmek İstiyor Musunuz ?'),
+                              Text('Bütçe planını silmek istiyor musunuz ?'),
                           contentPadding: const EdgeInsets.all(16.0),
                           actions: <Widget>[
                             FlatButton(
@@ -176,12 +192,18 @@ class _PlanState extends State<Plan> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
                             Text('İH '),
-                            Text(ihKB), // ih kalan bütçe
-                            Text('₺'),
+                            Row(children: <Widget>[
+                              Text(ihKB), // ih kalan bütçe
+                              Text('₺'),
+                            ]),
                             Text('/'),
                             Text('İS'),
-                            Text(isKB), // is kalan bütçe
-                            Text('₺'),
+                            Row(
+                              children: <Widget>[
+                                Text(isKB), // is kalan bütçe
+                                Text('₺'),
+                              ],
+                            ),
                           ],
                         )
                       ],
@@ -201,8 +223,12 @@ class _PlanState extends State<Plan> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text(anTas), // anlık tasarruf
-                          Text('₺'),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(anTas), // anlık tasarruf
+                                Text('₺'),
+                              ]),
                         ],
                       ),
                     ],
@@ -240,27 +266,29 @@ class _PlanState extends State<Plan> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
                                     children: <Widget>[
-                                      Text(snapshot.data[clickedIndex]
-                                          .ihOran), // planlanan ih oranı
+                                      Row(children: <Widget>[
+                                        Text('%'),
+                                        Text(snapshot.data[clickedIndex]
+                                            .ihOran), // planlanan ih oranı
+                                      ]),
                                       Text('/'),
-                                      Text(snapshot.data[clickedIndex]
-                                          .isOran), // planlanan is oranı
+                                      Row(children: <Widget>[
+                                        Text('%'),
+                                        Text(snapshot.data[clickedIndex]
+                                            .isOran), // planlanan is oranı
+                                      ]),
                                       Text('/'),
-                                      Text(snapshot.data[clickedIndex]
-                                          .tasOran), // planlanan tasarruf oranı
+                                      Row(children: <Widget>[
+                                        Text('%'),
+                                        Text(snapshot.data[clickedIndex]
+                                            .tasOran), // planlanan tasarruf oranı
+                                      ]),
                                     ],
                                   );
                                 }
                                 if (null == snapshot.data ||
                                     snapshot.data.length == 0) {
-                                  return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: <Widget>[
-                                      Text(
-                                          'PLAN KAYDOLMAMIŞ'), // planlanan ih oranı// planlanan tasarruf oranı
-                                    ],
-                                  );
+                                  return CircularProgressIndicator();
                                 }
                                 return CircularProgressIndicator();
                               },
@@ -280,11 +308,20 @@ class _PlanState extends State<Plan> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
-                                Text(ihAOran), // ih anlık oran
+                                Row(children: <Widget>[
+                                  Text('%'),
+                                  Text(ihAOran), // ih anlık oran
+                                ]),
                                 Text('/'),
-                                Text(isAOran), // is anlık oran
+                                Row(children: <Widget>[
+                                  Text('%'),
+                                  Text(isAOran), // is anlık oran
+                                ]),
                                 Text('/'),
-                                Text(tasAOran), // tasarruf anlık oran
+                                Row(children: <Widget>[
+                                  Text('%'),
+                                  Text(tasAOran), // tasarruf anlık oran
+                                ]),
                               ],
                             ),
                           ],
@@ -304,6 +341,8 @@ class _PlanState extends State<Plan> {
                     elevation: 4,
                     child: Text('Girdi ekle'),
                     onPressed: () {
+                      giderTTC.clear();
+                      giderTC.clear();
                       setState(() {
                         if (inputCont == false) {
                           inputCont = true;
@@ -377,9 +416,7 @@ class _PlanState extends State<Plan> {
                                         } else if (gelirTTC.text != '' &&
                                             gelirTC.text != '') {
                                           await addGelir();
-                                          print(
-                                              'GELİRLER LİST LENGTH: ${gelirler.length}');
-                                          print('GELİRLER LİST: $gelirler');
+                                          await delayed(4);
                                           sumGelirList();
                                           sumIHGiderList();
                                           sumISGiderList();
@@ -467,10 +504,7 @@ class _PlanState extends State<Plan> {
                                         } else if (giderTTC.text != '' &&
                                             giderTC.text != '') {
                                           await addGider();
-                                          print(
-                                              'GİDERLER LİST LENGTH: ${giderler.length}');
-                                          print(
-                                              'GİDERLER LİST: ${giderler[0].title}');
+                                          await delayed(4);
                                           sumIHGiderList();
                                           sumISGiderList();
                                           sumGiderlerList();
@@ -534,9 +568,12 @@ class _PlanState extends State<Plan> {
                                           child: Padding(
                                             padding: const EdgeInsets.all(5.0),
                                             child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: <Widget>[
                                                 Text(
-                                                  '${gelirler[index].title} ${gelirler.length}',
+                                                  gelirler[index].title,
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                   ),
@@ -612,6 +649,9 @@ class _PlanState extends State<Plan> {
                                           child: Padding(
                                             padding: const EdgeInsets.all(5.0),
                                             child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: <Widget>[
                                                 Text(
                                                   giderler[index].title,
@@ -673,23 +713,42 @@ class _PlanState extends State<Plan> {
                 margin: const EdgeInsets.all(15.0),
                 padding: const EdgeInsets.all(5.0),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text(
-                        'Gelir Toplamı: $gelirSum'), // gelir list elemanları toplamı
-                    Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                              'İH toplamı: $ihSum'), // ih gider list elemanları toplamı
-                          Text(
-                              'İS Toplamı: $isSum'), // is gider list elemanları toplamı
-                          Text(
-                              'Gider Toplamı: $giderSum'), // gider list elemanları toplamı
-                        ],
-                      ),
+                    Row(
+                      children: <Widget>[
+                        Text('Gelir Toplamı: $gelirSum'),
+                        Text('₺'),
+                      ],
+                    ), // gelir list elemanları toplamı
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Text(
+                                'İH toplamı: $ihSum'), // ih gider list elemanları toplamı
+                            Text('₺'),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                                'İS Toplamı: $isSum'), // is gider list elemanları toplamı
+                            Text('₺'),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                                'Gider Toplamı: $giderSum'), // gider list elemanları toplamı
+                            Text('₺'),
+                          ],
+                        ),
+                      ],
                     )
                   ],
-                ))
+                )),
           ]),
         ),
       )),
@@ -709,20 +768,25 @@ class _PlanState extends State<Plan> {
   } // değerleri giderler list ine ekler.
 
   sumGelirList() {
-    sleep(const Duration(seconds: 1));
+    /* Timer(const Duration(milliseconds: 1500), () { */
     gelirlerSum = 0;
+    print(gelirler.length);
     for (var i = 0; i < gelirler.length; i++) {
       setState(() {
         gelirlerSum += int.parse(gelirler[i].unit);
       });
     }
+    print('GELİRSUM INT: $gelirlerSum');
     print('Gelirlerin Toplamı: $gelirlerSum');
     setState(() {
       gelirSum = gelirlerSum.toString();
+      print('GELİRSUM STRING: $gelirSum');
     });
+    /* }); */
   }
 
   sumIHGiderList() {
+    /* Timer(const Duration(milliseconds: 1500), () { */
     ihGiderSum = 0;
     for (var i = 0; i < giderler.length; i++) {
       setState(() {
@@ -735,9 +799,11 @@ class _PlanState extends State<Plan> {
     setState(() {
       ihSum = ihGiderSum.toString();
     });
+    /* }); */
   }
 
   sumISGiderList() {
+    /* Timer(const Duration(milliseconds: 1500), () { */
     isGiderSum = 0;
     for (var i = 0; i < giderler.length; i++) {
       setState(() {
@@ -750,6 +816,7 @@ class _PlanState extends State<Plan> {
     setState(() {
       isSum = isGiderSum.toString();
     });
+    /* }); */
   }
 
   sumGiderlerList() {
@@ -869,9 +936,10 @@ class _PlanState extends State<Plan> {
     });
   }
 
-  /* setPerc() {
+  delayed(int sec) async {
+    await Future.delayed(Duration(seconds: sec));
     setState(() {
-      ihText = budgetPlans[clickedIndex].ihOran;
+      delayBool = true;
     });
-  } */
+  }
 }

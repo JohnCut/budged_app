@@ -152,8 +152,20 @@ class DBHelper {
     return giderler;
   }
 
+  Future<int> deleteGelirler(int bpID) async {
+    var dbClient = await db;
+    return await dbClient.delete(GETABLE, where: '$GEBPID = ?', whereArgs: [bpID]);
+  }
+
+  Future<int> deleteGiderler(int bpID) async {
+    var dbClient = await db;
+    return await dbClient.delete(GITABLE, where: '$GIBPID = ?', whereArgs: [bpID]);
+  }
+
   Future<int> deletePlan(int id) async {
     var dbClient = await db;
+    deleteGelirler(id);
+    deleteGiderler(id);
     return await dbClient.delete(BPTABLE, where: '$BPID = ?', whereArgs: [id]);
   }
 

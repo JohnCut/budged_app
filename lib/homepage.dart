@@ -112,14 +112,23 @@ class _HomepageState extends State<Homepage> {
                                                     MainAxisAlignment
                                                         .spaceEvenly,
                                                 children: <Widget>[
-                                                  Text(snapshot
-                                                      .data[index].ihOran),
+                                                  Row(children: <Widget>[
+                                                    Text('%'),
+                                                    Text(snapshot
+                                                        .data[index].ihOran),
+                                                  ]),
                                                   Text('/'),
-                                                  Text(snapshot
-                                                      .data[index].isOran),
+                                                  Row(children: <Widget>[
+                                                    Text('%'),
+                                                    Text(snapshot
+                                                        .data[index].isOran),
+                                                  ]),
                                                   Text('/'),
-                                                  Text(snapshot
-                                                      .data[index].tasOran),
+                                                  Row(children: <Widget>[
+                                                    Text('%'),
+                                                    Text(snapshot
+                                                        .data[index].tasOran),
+                                                  ]),
                                                 ]),
                                             SizedBox(height: 10.0),
                                             Text(snapshot.data[index].time),
@@ -130,7 +139,9 @@ class _HomepageState extends State<Homepage> {
                           }
                           if (null == snapshot.data ||
                               snapshot.data.length == 0) {
-                            return Container();
+                            return Container(
+                              child: Text('HEMEN BİR BÜTÇE PLANI OLUŞTUR!'),
+                            );
                           }
                           return CircularProgressIndicator();
                         },
