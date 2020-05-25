@@ -31,6 +31,11 @@ class _NewPlanState extends State<NewPlan> {
   void initState() {
     super.initState();
     dbHelper = DBHelper();
+    setState(() {
+      ihText = ihTC.text;
+      isText = isTC.text;
+      tasText = tasTC.text;
+    });
   }
 
   @override
@@ -87,6 +92,16 @@ class _NewPlanState extends State<NewPlan> {
                                 keyboardType: TextInputType.number,
                                 maxLength: 2,
                                 autofocus: true,
+                                onChanged: (text) {
+                                  setState(() {
+                                    if (ihText == '' || isText == '') {
+                                    } else {
+                                      var x = 100 - int.parse(ihText) +
+                                          int.parse(isText);
+                                      tasTC.text = x.toString();
+                                    }
+                                  });
+                                },
                               ),
                             ))
                           ]),
@@ -114,6 +129,16 @@ class _NewPlanState extends State<NewPlan> {
                                 keyboardType: TextInputType.number,
                                 maxLength: 2,
                                 autofocus: true,
+                                onChanged: (text) {
+                                  setState(() {
+                                    if (ihText == '' || isText == '') {
+                                    } else {
+                                      var x = 100 - int.parse(ihTC.text) +
+                                          int.parse(isTC.text);
+                                      tasTC.text = x.toString();
+                                    }
+                                  });
+                                },
                               ),
                             ))
                           ]),
@@ -191,17 +216,7 @@ class _NewPlanState extends State<NewPlan> {
     ));
   }
 
-  getTFValue() {
-    setState(() {
-      ihText = ihTC.text;
-      isText = isTC.text;
-      tasText = tasTC.text;
-    });
-    print('İH: $ihText, İS: $isText, TAS: $tasText');
-  }
-
   verifyPerc() {
-    getTFValue();
     if (ihText == '' || isText == '' || tasText == '') {
       setState(() {
         verifyPercBool = false;

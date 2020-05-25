@@ -41,6 +41,17 @@ class _HomepageState extends State<Homepage> {
         appBar: AppBar(
           title: Text('Anasayfa'),
         ),
+        floatingActionButton: FloatingActionButton(
+            elevation: 3.0,
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            backgroundColor: Colors.blue,
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => NewPlan()));
+            }),
         body: Container(
           child: Column(
             children: <Widget>[
@@ -145,17 +156,6 @@ class _HomepageState extends State<Homepage> {
                           }
                           return CircularProgressIndicator();
                         },
-                      ),
-                      RaisedButton(
-                        color: Colors.blue,
-                        textColor: Colors.white,
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => NewPlan()));
-                        },
-                        child: Text('Yeni Plan Ekle'),
                       ),
                     ]),
               ),

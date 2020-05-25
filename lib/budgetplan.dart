@@ -126,12 +126,14 @@ class _PlanState extends State<Plan> {
             IconButton(
                 icon: Icon(Icons.home),
                 onPressed: () {
+                  gelirler.removeRange(0, gelirler.length);
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => Homepage()));
                 }),
             IconButton(
                 icon: Icon(Icons.view_list),
                 onPressed: () {
+                  gelirler.removeRange(0, gelirler.length);
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => Reports()));
                 }),
@@ -157,6 +159,7 @@ class _PlanState extends State<Plan> {
                                 textColor: Color(0xFFB6B6B6),
                                 onPressed: () {
                                   dbHelper.deletePlan(clickedID);
+                                  gelirler.removeRange(0, gelirler.length);
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -168,6 +171,24 @@ class _PlanState extends State<Plan> {
                 }),
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+            elevation: 3.0,
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            backgroundColor: Colors.greenAccent,
+            onPressed: () {
+              giderTTC.clear();
+              giderTC.clear();
+              setState(() {
+                if (inputCont == false) {
+                  inputCont = true;
+                } else {
+                  inputCont = false;
+                }
+              });
+            }),
         body: Center(
           child: Column(children: [
             Container(
@@ -601,8 +622,7 @@ class _PlanState extends State<Plan> {
                                     }),
                               );
                             }
-                            if (null == snapshot.data ||
-                                snapshot.data.length == 0) {
+                            if (null == gelirler || gelirler.length == 0) {
                               return Center(
                                 child: Container(
                                   height: 30,
@@ -691,8 +711,7 @@ class _PlanState extends State<Plan> {
                                     }),
                               );
                             }
-                            if (null == snapshot.data ||
-                                snapshot.data.length == 0) {
+                            if (null == giderler || giderler.length == 0) {
                               return Center(
                                 child: Container(
                                   height: 30,
