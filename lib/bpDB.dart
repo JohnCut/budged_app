@@ -31,15 +31,17 @@ class GelirDB {
   int id;
   String title;
   String unit;
+  String time;
   int bpID;
 
-  GelirDB(this.id, this.title, this.unit, this.bpID);
+  GelirDB(this.id, this.title, this.unit, this.time, this.bpID);
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
       'id': id,
       'title': title,
       'unit': unit,
+      'time': time,
       'bpID': bpID,
     };
     return map;
@@ -49,6 +51,7 @@ class GelirDB {
     id = map['id'];
     title = map['title'];
     unit = map['unit'];
+    time = map['time'];
     bpID = map['bpID'];
   }
 }
@@ -58,9 +61,10 @@ class GiderDB {
   String title;
   String unit;
   String type;
+  String time;
   int bpID;
 
-  GiderDB(this.id, this.title, this.unit, this.type, this.bpID);
+  GiderDB(this.id, this.title, this.unit, this.type, this.time, this.bpID);
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
@@ -68,6 +72,7 @@ class GiderDB {
       'title': title,
       'unit': unit,
       'type': type,
+      'time': time,
       'bpID': bpID,
     };
     return map;
@@ -78,6 +83,7 @@ class GiderDB {
     title = map['title'];
     unit = map['unit'];
     type = map['type'];
+    time = map['time'];
     bpID = map['bpID'];
   }
 }

@@ -14,16 +14,18 @@ class DBHelper {
   static const String BPISORAN = 'isOran';
   static const String BPTASORAN = 'tasOran';
   static const String BPTABLE = 'BudgetPlan';
-  static const String DB_NAME = 'budgetplan03.db';
+  static const String DB_NAME = 'budgetplan04.db';
   static const String GEID = 'id';
   static const String GETITLE = 'title';
   static const String GEUNIT = 'unit';
+  static const String GETIME = 'time';
   static const String GEBPID = 'bpID';
   static const String GETABLE = 'GelirDB';
   static const String GIID = 'id';
   static const String GITITLE = 'title';
   static const String GIUNIT = 'unit';
   static const String GITYPE = 'type';
+  static const String GITIME = 'time';
   static const String GIBPID = 'bpID';
   static const String GITABLE = 'GiderDB';
 
@@ -47,10 +49,10 @@ class DBHelper {
         "CREATE TABLE $BPTABLE ($BPID INTEGER PRIMARY KEY, $BPTIME TEXT, $BPIHORAN TEXT, $BPISORAN TEXT, $BPTASORAN TEXT)");
 
     await db.execute(
-        "CREATE TABLE $GETABLE ($GEID INTEGER PRIMARY KEY, $GETITLE TEXT, $GEUNIT TEXT, $GEBPID INTEGER)");
+        "CREATE TABLE $GETABLE ($GEID INTEGER PRIMARY KEY, $GETITLE TEXT, $GEUNIT TEXT, $GETIME TEXT, $GEBPID INTEGER)");
 
     await db.execute(
-        "CREATE TABLE $GITABLE ($GIID INTEGER PRIMARY KEY, $GITITLE TEXT, $GIUNIT TEXT, $GITYPE TEXT, $GIBPID INTEGER)");
+        "CREATE TABLE $GITABLE ($GIID INTEGER PRIMARY KEY, $GITITLE TEXT, $GIUNIT TEXT, $GITYPE TEXT, $GITIME TEXT, $GIBPID INTEGER)");
   }
 
   Future<BudgetPlan> insertBP(BudgetPlan budgetplan) async {
@@ -126,8 +128,8 @@ class DBHelper {
 
   Future<List<GelirDB>> getGelirler() async {
     var dbClient = await db;
-    List<Map> maps =
-        await dbClient.query(GETABLE, columns: [GEID, GETITLE, GEUNIT, GEBPID]);
+    List<Map> maps = await dbClient
+        .query(GETABLE, columns: [GEID, GETITLE, GEUNIT, GETIME, GEBPID]);
     // List<Map> maps = await dbClient.rawQuery("SELECT * FROM $TABLE");
     List<GelirDB> gelirler = [];
     if (maps.length > 0) {
@@ -140,8 +142,8 @@ class DBHelper {
 
   Future<List<GiderDB>> getGiderler() async {
     var dbClient = await db;
-    List<Map> maps = await dbClient
-        .query(GITABLE, columns: [GEID, GETITLE, GEUNIT, GITYPE, GEBPID]);
+    List<Map> maps = await dbClient.query(GITABLE,
+        columns: [GEID, GETITLE, GEUNIT, GITYPE, GITIME, GEBPID]);
     // List<Map> maps = await dbClient.rawQuery("SELECT * FROM $TABLE");
     List<GiderDB> giderler = [];
     if (maps.length > 0) {
@@ -154,12 +156,14 @@ class DBHelper {
 
   Future<int> deleteGelirler(int bpID) async {
     var dbClient = await db;
-    return await dbClient.delete(GETABLE, where: '$GEBPID = ?', whereArgs: [bpID]);
+    return await dbClient
+        .delete(GETABLE, where: '$GEBPID = ?', whereArgs: [bpID]);
   }
 
   Future<int> deleteGiderler(int bpID) async {
     var dbClient = await db;
-    return await dbClient.delete(GITABLE, where: '$GIBPID = ?', whereArgs: [bpID]);
+    return await dbClient
+        .delete(GITABLE, where: '$GIBPID = ?', whereArgs: [bpID]);
   }
 
   Future<int> deletePlan(int id) async {

@@ -40,6 +40,12 @@ class _NewPlanState extends State<NewPlan> {
   }
 
   @override
+  void dispose() async {
+    await dbHelper.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
@@ -227,12 +233,13 @@ class _NewPlanState extends State<NewPlan> {
   }
 
   verifyPerc() {
-    if (ihText == '' || isText == '' || tasText == '') {
+    print('IH: $ihText IS: $isText TAS: ${tasTC.text}');
+    if (ihText == '' || isText == '' || tasTC.text == '') {
       setState(() {
         verifyPercBool = false;
       });
     } else {
-      if (int.parse(ihText) + int.parse(isText) + int.parse(tasText) != 100) {
+      if (int.parse(ihText) + int.parse(isText) + int.parse(tasTC.text) != 100) {
         setState(() {
           verifyPercBool = false;
         });
@@ -245,7 +252,7 @@ class _NewPlanState extends State<NewPlan> {
   }
 
   addPlan() async {
-    BudgetPlan e = await BudgetPlan(null, nowString, ihText, isText, tasText);
+    BudgetPlan e = await BudgetPlan(null, nowString, ihText, isText, tasTC.text);
     await dbHelper.insertBP(e);
   }
 
@@ -255,8 +262,6 @@ class _NewPlanState extends State<NewPlan> {
       } else {
         tasAns = 100 - (int.parse(ihV) + int.parse(isV));
         print(tasAns);
-        tasV = tasAns.toString();
-        print(tasV);
       }
     });
   }

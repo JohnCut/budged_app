@@ -32,6 +32,12 @@ class _HomepageState extends State<Homepage> {
   }
 
   @override
+  void dispose() async {
+    await dbHelper.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
@@ -68,7 +74,7 @@ class _HomepageState extends State<Homepage> {
                               fontWeight: FontWeight.bold)),
                       SizedBox(height: 25.0),
                       Text(
-                          '50/30/20 kuralı, kişisel finansman alanında uygulanan en etkili metotlardam biridir.',
+                          '50/30/20 kuralı, kişisel finansman alanında uygulanan en etkili metotlardan biridir.',
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 16.0,
@@ -94,7 +100,8 @@ class _HomepageState extends State<Homepage> {
                             return Flexible(
                               child: ListView.builder(
                                   shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
                                   itemCount: snapshot.data.length,
                                   itemBuilder: (context, index) {
                                     return ListTile(
@@ -148,13 +155,12 @@ class _HomepageState extends State<Homepage> {
                                   }),
                             );
                           }
-                          if (null == snapshot.data ||
-                              snapshot.data.length == 0) {
+                          if (snapshot.data == null || snapshot.data.length == 0) {
                             return Container(
                               child: Text('HEMEN BİR BÜTÇE PLANI OLUŞTUR!'),
                             );
                           }
-                          return CircularProgressIndicator();
+                          return Text('HEMEN BİR BÜTÇE PLANI OLUŞTUR!');
                         },
                       ),
                     ]),

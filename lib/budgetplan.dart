@@ -3,26 +3,28 @@ import 'dart:core';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:intl/intl.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'bpDB.dart';
 import 'dbhelper.dart';
 import 'homepage.dart';
 import 'reports.dart';
 
 class Gelir {
-  String title, unit;
-  Gelir(this.title, this.unit);
+  String title, unit, time;
+  Gelir(this.title, this.unit, this.time);
   @override
   String toString() {
-    return '{ ${this.title}, ${this.unit} }';
+    return '{ ${this.title}, ${this.unit}, ${this.time} }';
   }
 }
 
 class Gider {
-  String title, type, unit;
-  Gider(this.title, this.type, this.unit);
+  String title, type, unit, time;
+  Gider(this.title, this.type, this.unit, this.time);
   @override
   String toString() {
-    return '{ ${this.title}, ${this.type}, ${this.unit} }';
+    return '{ ${this.title}, ${this.type}, ${this.unit}, ${this.time} }';
   }
 }
 
@@ -42,6 +44,10 @@ class _PlanState extends State<Plan> {
   var dbHelper;
   int index;
   var i;
+
+  static var now = DateTime.now();
+  static var formatNow = DateFormat("dd-MM-yyyy hh:mm:ss").format(now);
+  String nowString = "${formatNow.toString()}";
 
   String ihText, isText, tasText; // planlanan oranlar
   final int clickedID, clickedIndex;
@@ -111,6 +117,12 @@ class _PlanState extends State<Plan> {
         calcTASOran();
       }
     });
+  }
+
+  @override
+  void dispose() async {
+    await dbHelper.close();
+    super.dispose();
   }
 
   @override
@@ -353,27 +365,6 @@ class _PlanState extends State<Plan> {
                 ),
               ]),
             ),
-            Container(
-                child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                RaisedButton(
-                    color: Colors.white,
-                    elevation: 4,
-                    child: Text('Girdi ekle'),
-                    onPressed: () {
-                      giderTTC.clear();
-                      giderTC.clear();
-                      setState(() {
-                        if (inputCont == false) {
-                          inputCont = true;
-                        } else {
-                          inputCont = false;
-                        }
-                      });
-                    })
-              ],
-            )),
             IntrinsicHeight(
               child: Column(
                 children: <Widget>[
@@ -572,50 +563,61 @@ class _PlanState extends State<Plan> {
                                               clickedID) {
                                             addListGelirler(
                                                 snapshot.data[i].title,
-                                                snapshot.data[i].unit);
+                                                snapshot.data[i].unit,
+                                                snapshot.data[i].time);
                                           } else {}
                                         }
                                       }));
                               return Expanded(
                                 child: ListView.builder(
                                     shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
                                     itemCount: gelirler.length,
                                     itemBuilder: (context, index) {
                                       return ListTile(
                                         title: Container(
-                                          color: Color.fromRGBO(
-                                              173, 216, 230, 0.4),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(5.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                Text(
-                                                  gelirler[index].title,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
+                                          child: Column(
+                                            children: <Widget>[
+                                              AutoSizeText(
+                                                gelirler[index].time,
+                                                maxLines: 1,
+                                              ),
+                                              Container(
+                                                color: Color.fromRGBO(
+                                                    173, 216, 230, 0.4),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: <Widget>[
+                                                      AutoSizeText(
+                                                        gelirler[index].title,
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                        maxLines: 1,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 20.0,
+                                                      ),
+                                                      AutoSizeText(
+                                                        '${gelirler[index].unit}₺',
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                        maxLines: 1,
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                  width: 20.0,
-                                                ),
-                                                Text(
-                                                  gelirler[index].unit,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  '₺',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       );
@@ -652,59 +654,71 @@ class _PlanState extends State<Plan> {
                                             addListGiderler(
                                                 snapshot.data[i].title,
                                                 snapshot.data[i].type,
-                                                snapshot.data[i].unit);
+                                                snapshot.data[i].unit,
+                                                snapshot.data[i].time);
                                           } else {}
                                         }
                                       }));
                               return Expanded(
                                 child: ListView.builder(
                                     shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
                                     itemCount: giderler.length,
                                     itemBuilder: (context, index) {
                                       return ListTile(
                                         title: Container(
-                                          color: Color.fromRGBO(
-                                              255, 223, 191, 0.4),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(5.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                Text(
-                                                  giderler[index].title,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
+                                          child: Column(
+                                            children: <Widget>[
+                                              AutoSizeText(
+                                                giderler[index].time,
+                                                maxLines: 1,
+                                              ),
+                                              Container(
+                                                color: Color.fromRGBO(
+                                                    255, 223, 191, 0.4),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: <Widget>[
+                                                      AutoSizeText(
+                                                        giderler[index].title,
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                        maxLines: 1,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 15.0,
+                                                      ),
+                                                      AutoSizeText(
+                                                        '${giderler[index].unit}₺',
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                        maxLines: 1,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 15.0,
+                                                      ),
+                                                      Text(
+                                                        giderler[index].type,
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                  width: 15.0,
-                                                ),
-                                                Text(
-                                                  giderler[index].unit,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  '₺',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: 15.0,
-                                                ),
-                                                Text(
-                                                  giderler[index].type,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       );
@@ -774,15 +788,15 @@ class _PlanState extends State<Plan> {
     );
   }
 
-  addListGelirler(String title, unit) {
+  addListGelirler(String title, unit, time) {
     setState(() {
-      gelirler.add((Gelir(title, unit)));
+      gelirler.add((Gelir(title, unit, time)));
     });
   } // değerleri gelirler list ine ekler.
 
-  addListGiderler(String title, type, unit) {
+  addListGiderler(String title, type, unit, time) {
     setState(() {
-      giderler.add((Gider(title, type, unit)));
+      giderler.add((Gider(title, type, unit, time)));
     });
   } // değerleri giderler list ine ekler.
 
@@ -895,17 +909,27 @@ class _PlanState extends State<Plan> {
 
   calcIHOran() {
     setState(() {
-      double x = int.parse(gelirSum) / 100;
-      ihaoranDB = int.parse(ihSum) / x.round();
-      ihAOran = (ihaoranDB).round().toString();
+      try {
+        double x = int.parse(gelirSum) / 100;
+        ihaoranDB = int.parse(ihSum) / x.round();
+        var rounded = (ihaoranDB).round();
+        ihAOran = rounded.toString();
+      } catch (e) {
+        ihAOran = '0';
+      }
     });
   }
 
   calcISOran() {
     setState(() {
-      double x = int.parse(gelirSum) / 100;
-      isaoranDB = int.parse(isSum) / x.round();
-      isAOran = (isaoranDB).round().toString();
+      try {
+        double x = int.parse(gelirSum) / 100;
+        isaoranDB = int.parse(isSum) / x.round();
+        var rounded = (isaoranDB).round();
+        isAOran = rounded.toString();
+      } catch (e) {
+        isAOran = '0';
+      }
     });
   }
 
@@ -923,7 +947,8 @@ class _PlanState extends State<Plan> {
   }
 
   addGelir() async {
-    GelirDB e = await GelirDB(null, gelirTTC.text, gelirTC.text, clickedID);
+    GelirDB e =
+        await GelirDB(null, gelirTTC.text, gelirTC.text, nowString, clickedID);
     await dbHelper.insertGE(e);
     gelirTTC.clear();
     gelirTC.clear();
@@ -939,8 +964,8 @@ class _PlanState extends State<Plan> {
   }
 
   addGider() async {
-    GiderDB e =
-        await GiderDB(null, giderTTC.text, giderTC.text, gidDBValue, clickedID);
+    GiderDB e = await GiderDB(
+        null, giderTTC.text, giderTC.text, gidDBValue, nowString, clickedID);
     await dbHelper.insertGI(e);
     giderTTC.clear();
     giderTC.clear();
