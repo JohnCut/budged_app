@@ -548,8 +548,8 @@ class _PlanState extends State<Plan> {
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        FutureBuilder(
-                          future: dbHelper.getGelirler(),
+                        StreamBuilder(
+                          stream: Stream.fromFuture(dbHelper.getGelirler()),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               SchedulerBinding.instance
@@ -638,8 +638,8 @@ class _PlanState extends State<Plan> {
                             return CircularProgressIndicator();
                           },
                         ),
-                        FutureBuilder(
-                          future: dbHelper.getGiderler(),
+                        StreamBuilder(
+                          stream: Stream.fromFuture(dbHelper.getGiderler()),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               SchedulerBinding.instance
