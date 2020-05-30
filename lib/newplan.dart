@@ -26,6 +26,7 @@ class _NewPlanState extends State<NewPlan> {
   final tasTC = TextEditingController();
   String ihText, isText, tasText;
   bool verifyPercBool = false;
+  int tasAns;
 
   @override
   void initState() {
@@ -94,11 +95,15 @@ class _NewPlanState extends State<NewPlan> {
                                 autofocus: true,
                                 onChanged: (text) {
                                   setState(() {
-                                    if (ihText == '' || isText == '') {
+                                    ihText = text;
+                                    setTasValue(ihText, isText, tasTC.text);
+                                    if (ihText == '' ||
+                                        isText == '' ||
+                                        ihText == null ||
+                                        isText == null) {
+                                      tasTC.text = '';
                                     } else {
-                                      var x = 100 - int.parse(ihText) +
-                                          int.parse(isText);
-                                      tasTC.text = x.toString();
+                                      tasTC.text = tasAns.toString();
                                     }
                                   });
                                 },
@@ -131,12 +136,17 @@ class _NewPlanState extends State<NewPlan> {
                                 autofocus: true,
                                 onChanged: (text) {
                                   setState(() {
-                                    if (ihText == '' || isText == '') {
+                                    isText = text;
+                                    setTasValue(ihText, isText, tasTC.text);
+                                    if (ihText == '' ||
+                                        isText == '' ||
+                                        ihText == null ||
+                                        isText == null) {
+                                      tasTC.text = '';
                                     } else {
-                                      var x = 100 - int.parse(ihTC.text) +
-                                          int.parse(isTC.text);
-                                      tasTC.text = x.toString();
+                                      tasTC.text = tasAns.toString();
                                     }
+                                    print('tasText: $tasText');
                                   });
                                 },
                               ),
@@ -237,5 +247,17 @@ class _NewPlanState extends State<NewPlan> {
   addPlan() async {
     BudgetPlan e = await BudgetPlan(null, nowString, ihText, isText, tasText);
     await dbHelper.insertBP(e);
+  }
+
+  setTasValue(String ihV, String isV, String tasV) {
+    setState(() {
+      if (ihV == '' || isV == '' || ihV == null || isV == null) {
+      } else {
+        tasAns = 100 - (int.parse(ihV) + int.parse(isV));
+        print(tasAns);
+        tasV = tasAns.toString();
+        print(tasV);
+      }
+    });
   }
 }
