@@ -1,12 +1,15 @@
 class BudgetPlan {
   int id;
-  String time, ihOran, isOran, tasOran;
+  String day, month, year, time, ihOran, isOran, tasOran;
 
-  BudgetPlan(this.id, this.time, this.ihOran, this.isOran, this.tasOran);
+  BudgetPlan(this.id, this.day, this.month, this.year, this.time, this.ihOran, this.isOran, this.tasOran);
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
       'id': id,
+      'day': day,
+      'month': month,
+      'year': year,
       'time': time,
       'ihOran': ihOran,
       'isOran': isOran,
@@ -17,6 +20,9 @@ class BudgetPlan {
 
   BudgetPlan.fromMap(Map<String, dynamic> map) {
     id = map['id'];
+    day = map['day'];
+    month = map['month'];
+    year = map['year'];
     time = map['time'];
     ihOran = map['ihOran'];
     isOran = map['isOran'];
@@ -80,7 +86,9 @@ class GiderDB {
 
 class Report {
   int id, bpID;
-  String date,
+  String day,
+  month,
+  year,
       geSum,
       ayTas,
       ihSum,
@@ -96,7 +104,9 @@ class Report {
   Report(
       this.id,
       this.bpID,
-      this.date,
+      this.day,
+      this.month,
+      this.year,
       this.geSum,
       this.ayTas,
       this.ihSum,
@@ -113,7 +123,9 @@ class Report {
     var map = <String, dynamic>{
       'id': id,
       'bpID': bpID,
-      'date': date,
+      'day': day,
+      'month': month,
+      'year': year,
       'geSum': geSum,
       'aytas': ayTas,
       'ihSum': ihSum,
@@ -132,7 +144,9 @@ class Report {
   Report.fromMap(Map<String, dynamic> map) {
     id = map['id'];
     bpID = map['bpID'];
-    date = map['date'];
+    day = map['day'];
+    month = map['month'];
+    year = map['year'];
     geSum = map['geSum'];
     ayTas = map['ayTas'];
     ihSum = map['ihSum'];

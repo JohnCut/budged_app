@@ -48,6 +48,10 @@ class _PlanState extends State<Plan> {
   static var now = DateTime.now();
   static var formatNow = DateFormat("dd-MM-yyyy hh:mm:ss").format(now);
   String nowString = "${formatNow.toString()}";
+    String currentDay = now.day.toString();
+  String currentMonth = now.month.toString();
+  String currentYear = now.year.toString();
+  String currentTime = DateFormat("H:m:s").format(now);
 
   String ihText, isText, tasText; // planlanan oranlar
   final int clickedID, clickedIndex;

@@ -9,12 +9,15 @@ import 'dart:convert';
 class DBHelper {
   static Database _db;
   static const String BPID = 'id';
+  static const String BPDAY = 'day';
+  static const String BPMONTH = 'month';
+  static const String BPYEAR = 'year';
   static const String BPTIME = 'time';
   static const String BPIHORAN = 'ihOran';
   static const String BPISORAN = 'isOran';
   static const String BPTASORAN = 'tasOran';
   static const String BPTABLE = 'BudgetPlan';
-  static const String DB_NAME = 'budgetplan05.db';
+  static const String DB_NAME = 'budgetplan06.db';
   static const String GEID = 'id';
   static const String GETITLE = 'title';
   static const String GEUNIT = 'unit';
@@ -30,7 +33,9 @@ class DBHelper {
   static const String GITABLE = 'GiderDB';
   static const String REID = 'id';
   static const String REBPID = 'bpID';
-  static const String REDATE = 'date';
+  static const String REDAY = 'day';
+  static const String REMONTH = 'month';
+  static const String REYEAR = 'year';
   static const String REGESUM = 'geSum';
   static const String REAYTAS = 'ayTas';
   static const String REIHSUM = 'ihSum';
@@ -61,7 +66,7 @@ class DBHelper {
 
   _onCreate(Database db, int version) async {
     await db.execute(
-        "CREATE TABLE $BPTABLE ($BPID INTEGER PRIMARY KEY, $BPTIME TEXT, $BPIHORAN TEXT, $BPISORAN TEXT, $BPTASORAN TEXT)");
+        "CREATE TABLE $BPTABLE ($BPID INTEGER PRIMARY KEY, $BPDAY TEXT, $BPMONTH TEXT, $BPYEAR TEXT, $BPTIME TEXT, $BPIHORAN TEXT, $BPISORAN TEXT, $BPTASORAN TEXT)");
 
     await db.execute(
         "CREATE TABLE $GETABLE ($GEID INTEGER PRIMARY KEY, $GETITLE TEXT, $GEUNIT TEXT, $GETIME TEXT, $GEBPID INTEGER)");
@@ -70,7 +75,7 @@ class DBHelper {
         "CREATE TABLE $GITABLE ($GIID INTEGER PRIMARY KEY, $GITITLE TEXT, $GIUNIT TEXT, $GITYPE TEXT, $GITIME TEXT, $GIBPID INTEGER)");
 
     await db.execute(
-        "CREATE TABLE $RETABLE ($REID INTEGER PRIMARY KEY, $REBPID INTEGER, $REDATE TEXT, $REGESUM TEXT, $REAYTAS TEXT, $REIHSUM TEXT, $REISSUM TEXT, $REGISUM TEXT, $REIHHO TEXT, $REISHO TEXT, $RETASHO TEXT, $REIHAO TEXT, $REISAO TEXT, $RETASAO TEXT)");
+        "CREATE TABLE $RETABLE ($REID INTEGER PRIMARY KEY, $REBPID INTEGER, $REDAY TEXT, $BPMONTH TEXT, $BPYEAR TEXT, $REGESUM TEXT, $REAYTAS TEXT, $REIHSUM TEXT, $REISSUM TEXT, $REGISUM TEXT, $REIHHO TEXT, $REISHO TEXT, $RETASHO TEXT, $REIHAO TEXT, $REISAO TEXT, $RETASAO TEXT)");
   }
 
   Future<BudgetPlan> insertBP(BudgetPlan budgetplan) async {
@@ -151,8 +156,16 @@ class DBHelper {
 
   Future<List<BudgetPlan>> getPlans() async {
     var dbClient = await db;
-    List<Map> maps = await dbClient
-        .query(BPTABLE, columns: [BPID, BPTIME, BPIHORAN, BPISORAN, BPTASORAN]);
+    List<Map> maps = await dbClient.query(BPTABLE, columns: [
+      BPID,
+      BPDAY,
+      BPMONTH,
+      BPYEAR,
+      BPTIME,
+      BPIHORAN,
+      BPISORAN,
+      BPTASORAN
+    ]);
     // List<Map> maps = await dbClient.rawQuery("SELECT * FROM $TABLE");
     List<BudgetPlan> budgetPlans = [];
     if (maps.length > 0) {
@@ -196,7 +209,9 @@ class DBHelper {
     List<Map> maps = await dbClient.query(RETABLE, columns: [
       REID,
       REBPID,
-      REDATE,
+      REDAY,
+      REMONTH,
+      REYEAR,
       REGESUM,
       REAYTAS,
       REIHSUM,

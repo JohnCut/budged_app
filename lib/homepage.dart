@@ -149,13 +149,15 @@ class _HomepageState extends State<Homepage> {
                                                   ]),
                                                 ]),
                                             SizedBox(height: 10.0),
-                                            Text(snapshot.data[index].time),
+                                            Text(
+                                                '${snapshot.data[index].day}/${snapshot.data[index].month}/${snapshot.data[index].year} ${snapshot.data[index].time}'),
                                           ])),
                                     );
                                   }),
                             );
                           }
-                          if (snapshot.data == null || snapshot.data.length == 0) {
+                          if (snapshot.data == null ||
+                              snapshot.data.length == 0) {
                             return Container(
                               child: Text('HEMEN BİR BÜTÇE PLANI OLUŞTUR!'),
                             );

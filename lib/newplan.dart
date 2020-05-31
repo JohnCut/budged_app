@@ -18,8 +18,10 @@ class _NewPlanState extends State<NewPlan> {
   var dbHelper;
 
   static var now = DateTime.now();
-  static var formatNow = DateFormat("dd-MM-yyyy hh:mm:ss").format(now);
-  String nowString = "${formatNow.toString()}";
+  String currentDay = now.day.toString();
+  String currentMonth = now.month.toString();
+  String currentYear = now.year.toString();
+  String currentTime = DateFormat("H:m:s").format(now);
 
   final ihTC = TextEditingController();
   final isTC = TextEditingController();
@@ -191,7 +193,7 @@ class _NewPlanState extends State<NewPlan> {
                           textColor: Colors.white,
                           child: Text('Plan Oluştur'),
                           onPressed: () {
-                            print(nowString);
+                            print('$currentDay/$currentMonth/$currentYear $currentTime');
                             verifyPerc();
                             if (verifyPercBool != true) {
                               print('ORANLARIN TOPLAMI 100 OLMALI');
@@ -252,7 +254,7 @@ class _NewPlanState extends State<NewPlan> {
   }
 
   addPlan() async {
-    BudgetPlan e = await BudgetPlan(null, nowString, ihText, isText, tasTC.text);
+    BudgetPlan e = await BudgetPlan(null, currentDay, currentMonth, currentYear, currentTime, ihText, isText, tasTC.text);
     await dbHelper.insertBP(e);
   }
 
