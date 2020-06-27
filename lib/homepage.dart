@@ -45,7 +45,7 @@ class _HomepageState extends State<Homepage> {
           home: Scaffold(
         backgroundColor: Color.fromRGBO(182, 195, 204, 1.0),
         appBar: AppBar(
-          title: Text('Anasayfa'),
+          title: Text('nasayfa'),
         ),
         floatingActionButton: FloatingActionButton(
             elevation: 3.0,
